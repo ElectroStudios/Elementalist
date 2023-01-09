@@ -1,6 +1,13 @@
 package net.electro.elementalist;
 
 import com.mojang.logging.LogUtils;
+import net.electro.elementalist.client.particle.ModParticles;
+import net.electro.elementalist.entities.ModEntities;
+import net.electro.elementalist.item.ModItems;
+import net.electro.elementalist.networking.ModMessages;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -23,6 +30,12 @@ public class Elementalist
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        ModItems.register(modEventBus);
+
+        ModEntities.ENTITIES.register(modEventBus);
+
+        ModParticles.register(modEventBus);
+
         modEventBus.addListener(this::commonSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
@@ -32,6 +45,7 @@ public class Elementalist
     {
         LOGGER.info("HELLO FROM COMMON SETUP");
         LOGGER.info("DIRT BLOCK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
+        ModMessages.register();
     }
 
 
@@ -40,9 +54,8 @@ public class Elementalist
     public static class ClientModEvents
     {
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event)
-        {
-
+        public static void onClientSetup(FMLClientSetupEvent event) {
         }
     }
+
 }

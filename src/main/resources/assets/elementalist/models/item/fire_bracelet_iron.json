@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "elementalist:item/iron_bracelet",
+    "layer1": "elementalist:item/fire_essence_bracelet"
+  }
+}
