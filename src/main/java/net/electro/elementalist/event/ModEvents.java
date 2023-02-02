@@ -5,9 +5,7 @@ import net.electro.elementalist.client.ClientSpellStateData;
 import net.electro.elementalist.data.ElementalistStatsProvider;
 import net.electro.elementalist.data.SpellStateProvider;
 import net.electro.elementalist.networking.ModMessages;
-import net.electro.elementalist.networking.packet.CooldownSyncS2CPacket;
 import net.electro.elementalist.networking.packet.ManaSyncS2CPacket;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -70,6 +68,7 @@ public class ModEvents {
                     if (event.player.tickCount % 5 == 0) {
                         ClientSpellStateData.decreaseSpellCooldowns();
                     }
+                    ClientSpellStateData.decrementAltInterval();
                 }
             }
         }

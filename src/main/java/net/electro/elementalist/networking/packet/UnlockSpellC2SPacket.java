@@ -38,7 +38,7 @@ public class UnlockSpellC2SPacket {
             ItemStack heldItem = player.getMainHandItem();
             if (heldItem.getItem() instanceof BraceletMaster bracelet) {
                 bracelet.addNbtData(0, 0, heldItem);
-                bracelet.addNbtData(1, 1, heldItem);
+                bracelet.addNbtData(1, 2, heldItem);
             }
 
         });

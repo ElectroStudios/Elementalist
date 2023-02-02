@@ -2,13 +2,18 @@ package net.electro.elementalist.spells;
 
 
 import net.electro.elementalist.data.SpellStateProvider;
+import net.electro.elementalist.util.DamageType;
+import net.electro.elementalist.util.Element;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public abstract class SpellsMaster {
-    public float baseDamage;
+    public DamageType damageType;
     public int manaCost;
     public int spellId;
     public int spellCooldownTicks;
+    public ResourceLocation spellIcon;
+    public String spellString;
 
     protected void initialize_spell(Player player) {
 

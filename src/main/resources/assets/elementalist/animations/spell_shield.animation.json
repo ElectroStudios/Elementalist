@@ -1,0 +1,76 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.spell_shield.idle": {
+			"loop": true,
+			"animation_length": 4,
+			"bones": {
+				"circle_large": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 90]
+						},
+						"2.0": {
+							"vector": [0, 0, 180]
+						},
+						"3.0": {
+							"vector": [0, 0, 270]
+						},
+						"4.0": {
+							"vector": [0, 0, 360]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 2],
+							"easing": "easeInOutSine"
+						},
+						"4.0": {
+							"vector": [0, 0, 0],
+							"easing": "easeOutSine"
+						}
+					}
+				},
+				"circle_small": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, -90]
+						},
+						"2.0": {
+							"vector": [0, 0, -180]
+						},
+						"3.0": {
+							"vector": [0, 0, -270]
+						},
+						"4.0": {
+							"vector": [0, 0, -360]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, -2],
+							"easing": "easeInOutSine"
+						},
+						"4.0": {
+							"vector": [0, 0, 0],
+							"easing": "easeOutSine"
+						}
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}

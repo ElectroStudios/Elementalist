@@ -1,5 +1,6 @@
 package net.electro.elementalist.item.bracelets;
 
+import net.electro.elementalist.util.Element;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
@@ -14,8 +15,15 @@ import net.minecraft.world.level.Level;
 import org.checkerframework.checker.units.qual.C;
 
 public class BraceletMaster extends Item {
+    public final Element ELEMENT;
     public BraceletMaster(Properties pProperties) {
         super(pProperties);
+        ELEMENT = null;
+    }
+
+    public BraceletMaster(Properties properties, Element element) {
+        super(properties);
+        this.ELEMENT = element;
     }
 
     public void addNbtData(int spellSlotId, int spellId, ItemStack itemStack) {
@@ -33,6 +41,10 @@ public class BraceletMaster extends Item {
 
     public int getNbtData(int spellSlotId, ItemStack itemStack) {
         return itemStack.getTag().getInt("elementalist.spell_slot_" + spellSlotId);
+    }
+
+    public boolean hasNbtData(int spellSlotId, ItemStack itemStack) {
+        return itemStack.getTag().contains("elementalist.spell_slot_" + spellSlotId);
     }
 
     @Override
@@ -53,11 +65,5 @@ public class BraceletMaster extends Item {
     @Override
     public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, Player player) {
         return true;
-    }
-
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
-
-        return super.use(pLevel, pPlayer, pUsedHand);
     }
 }

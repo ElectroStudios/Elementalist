@@ -1,5 +1,17 @@
 {
+  "elementalist.spell_names.fireball":  "Fireball",
+  "elementalist.spell_names.fire_pulse":  "Fire pulse",
+  "elementalist.spell_names.fire_breath":  "Fire breath",
+  "elementalist.spell_names.fire_explosion":  "Fire explosion",
+
+  "elementalist.spell_names.water_slash":  "Water slash",
+  "elementalist.spell_names.water_stream":  "Water stream",
+
+  "elementalist.spell_names.ice_spear":  "Ice spear",
+
   "item.elementalist.fire_bracelet_iron": "Fire iron bracelet",
+  "item.elementalist.water_bracelet_iron": "Water iron bracelet",
+  "item.elementalist.ice_bracelet_iron": "Ice iron bracelet",
 
   "itemGroup.elementalist": "Elementalist",
 

@@ -1,8 +1,10 @@
-package net.electro.elementalist.entities.spells;
+package net.electro.elementalist.entities.spells.fire;
 
 import net.electro.elementalist.client.particle.ModParticles;
 import net.electro.elementalist.entities.ModEntities;
+import net.electro.elementalist.entities.spells.SpellMasterEntity;
 import net.electro.elementalist.util.DamageDealer;
+import net.electro.elementalist.util.DamageType;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -16,31 +18,32 @@ public class FirePulseEntity extends SpellMasterEntity {
     private int duration = 20;
     private final int DURATION_MAX = 20;
     private final float RADIUS = 15f;
-    private DamageDealer dd;
-    private RandomSource random;
     public FirePulseEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public FirePulseEntity(LivingEntity owner, float baseDamage) {
-        super(ModEntities.FIRE_PULSE.get(), owner);
-        random = owner.level.random;
-        dd = new DamageDealer(this.position(), owner, this) {
+    public FirePulseEntity(LivingEntity owner, DamageType damageType) {
+        super(ModEntities.FIRE_PULSE.get(), owner, damageType);
+    }
+
+    private void DealDamage() {
+        DamageDealer dd = new DamageDealer(this.position(), getOwner(), this, this.ignoredEntities) {
             @Override
-            public void DamageEffects(LivingEntity entity, float effectAmount, Vec3 direction) {
-                entity.hurt(DamageSource.indirectMagic(SOURCE, OWNER), baseDamage);
-                entity.setSecondsOnFire(5);
-                entity.knockback(1.5f, direction.x, direction.z);
+            public void damageEffects(LivingEntity entity, float effectAmount, Vec3 direction) {
+                entity.setSecondsOnFire(damageType.ADDITIONAL_EFFECT_MULTIPLIER);
+                entity.hurt(DamageSource.indirectMagic(SOURCE, OWNER), damageType.BASE_DAMAGE);
+                entity.knockback(damageType.KNOCKBACK, direction.x, direction.z);
                 ignoredEntities.add(entity);
             }
         };
+        dd.dealDamageSphere((1 - (duration / (float) DURATION_MAX)) * RADIUS, 3);
     }
 
     @Override
     public void tick() {
         super.tick();
         duration--;
-        random = this.level.random;
+        RandomSource random = this.level.random;
 
         if (this.level.isClientSide()) {
             if (duration % 3 == 0) {
@@ -49,7 +52,7 @@ public class FirePulseEntity extends SpellMasterEntity {
                     float currentRadius = (1 - (duration / (float) DURATION_MAX)) * RADIUS;
                     this.level.addParticle(ModParticles.FIRE_FLASH_PARTICLES.get(),
                             Math.sin(randomAngle) * currentRadius + this.getX(),
-                            this.getY() + (2 * random.nextFloat()),
+                            this.getY() + (3 * random.nextFloat()) - 2f,
                             Math.cos(randomAngle) * currentRadius + this.getZ(),
                             0, 0.25f, 0);
                 }
@@ -59,7 +62,7 @@ public class FirePulseEntity extends SpellMasterEntity {
         else {
 
             if (duration % 3 == 0) {
-                dd.DealDamageSphere((1 - (duration / (float) DURATION_MAX)) * RADIUS);
+                DealDamage();
             }
 
             if (duration <= 0) {

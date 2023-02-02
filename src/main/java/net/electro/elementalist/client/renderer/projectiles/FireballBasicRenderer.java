@@ -32,6 +32,6 @@ public class FireballBasicRenderer extends EntityRenderer<FireballBasic> {
 
     @Override
     public ResourceLocation getTextureLocation(FireballBasic pEntity) {
-        return null;
+        return TEXTURE_LOCATION;
     }
 }

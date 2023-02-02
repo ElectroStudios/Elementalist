@@ -1,10 +1,7 @@
 package net.electro.elementalist.networking;
 
 import net.electro.elementalist.Elementalist;
-import net.electro.elementalist.networking.packet.ActivateSpellC2SPacket;
-import net.electro.elementalist.networking.packet.CooldownSyncS2CPacket;
-import net.electro.elementalist.networking.packet.ManaSyncS2CPacket;
-import net.electro.elementalist.networking.packet.UnlockSpellC2SPacket;
+import net.electro.elementalist.networking.packet.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
@@ -36,16 +33,40 @@ public class ModMessages {
                 .consumerMainThread(UnlockSpellC2SPacket::handle)
                 .add();
 
+        net.messageBuilder(SelectSpellC2SPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(SelectSpellC2SPacket::new)
+                .encoder(SelectSpellC2SPacket::toBytes)
+                .consumerMainThread(SelectSpellC2SPacket::handle)
+                .add();
+
         net.messageBuilder(ActivateSpellC2SPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(ActivateSpellC2SPacket::new)
                 .encoder(ActivateSpellC2SPacket::toBytes)
                 .consumerMainThread(ActivateSpellC2SPacket::handle)
                 .add();
 
+        net.messageBuilder(ActivateShieldC2SPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(ActivateShieldC2SPacket::new)
+                .encoder(ActivateShieldC2SPacket::toBytes)
+                .consumerMainThread(ActivateShieldC2SPacket::handle)
+                .add();
+
         net.messageBuilder(ManaSyncS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ManaSyncS2CPacket::new)
                 .encoder(ManaSyncS2CPacket::toBytes)
                 .consumerMainThread(ManaSyncS2CPacket::handle)
+                .add();
+
+        net.messageBuilder(ExplosionEffectsS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(ExplosionEffectsS2CPacket::new)
+                .encoder(ExplosionEffectsS2CPacket::toBytes)
+                .consumerMainThread(ExplosionEffectsS2CPacket::handle)
+                .add();
+
+        net.messageBuilder(SpellEntityClientSetupS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(SpellEntityClientSetupS2CPacket::new)
+                .encoder(SpellEntityClientSetupS2CPacket::toBytes)
+                .consumerMainThread(SpellEntityClientSetupS2CPacket::handle)
                 .add();
 
         net.messageBuilder(CooldownSyncS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
@@ -61,4 +82,5 @@ public class ModMessages {
     public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), message);
     }
+
 }
