@@ -9,6 +9,8 @@ import net.electro.elementalist.util.Element;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.List;
+
 public class WaterStreamSpell extends SpellsMaster {
     public WaterStreamSpell() {
         damageType = new DamageType(7, Element.WATER, 0, 4);
@@ -17,6 +19,7 @@ public class WaterStreamSpell extends SpellsMaster {
         spellCooldownTicks = 140;
         spellIcon = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/spellicons/water_stream_spell_icon.png");
         spellString = "water_stream";
+        children = List.of();
     }
     @Override
     protected void initialize_spell(Player player) {

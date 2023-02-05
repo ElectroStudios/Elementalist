@@ -23,7 +23,7 @@ public class ModItems {
             () -> new BraceletMaster(new Item.Properties().tab(ModCreativeModeTab.ELEMENTALIST_TAB).stacksTo(1), Element.ICE));
 
     public static final RegistryObject<Item> ELEMENTALIST_GRIMOIRE = ITEMS.register("elementalist_grimoire",
-            () -> new Item(new Item.Properties().tab(ModCreativeModeTab.ELEMENTALIST_TAB).stacksTo(1)));
+            () -> new ElementalistGrimoire(new Item.Properties().tab(ModCreativeModeTab.ELEMENTALIST_TAB).stacksTo(1)));
 
 
     public static void register(IEventBus eventBus)

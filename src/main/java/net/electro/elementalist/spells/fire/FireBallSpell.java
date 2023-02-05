@@ -8,6 +8,8 @@ import net.electro.elementalist.util.Element;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.List;
+
 public class FireBallSpell extends SpellsMaster {
     public FireBallSpell() {
         damageType = new DamageType(7, Element.FIRE, 3, 1);
@@ -16,6 +18,7 @@ public class FireBallSpell extends SpellsMaster {
         spellCooldownTicks = 60;
         spellIcon = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/spellicons/fireball_spell_icon.png");
         spellString = "fireball";
+        children = List.of(1);
     }
     @Override
     protected void initialize_spell(Player player) {

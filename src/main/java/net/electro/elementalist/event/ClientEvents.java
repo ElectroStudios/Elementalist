@@ -2,6 +2,7 @@ package net.electro.elementalist.event;
 
 import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.client.ClientSpellStateData;
+import net.electro.elementalist.client.gui.GrimoireScreen;
 import net.electro.elementalist.client.gui.SpellSelectWheelGui;
 import net.electro.elementalist.client.gui.SpellStateGui;
 import net.electro.elementalist.client.models.projectiles.FireballBasicModel;
@@ -17,6 +18,7 @@ import net.electro.elementalist.client.renderer.spellentities.ShieldSpellRendere
 import net.electro.elementalist.client.renderer.spellentities.WaterSlashRenderer;
 import net.electro.elementalist.client.renderer.spellentities.WaterStreamRenderer;
 import net.electro.elementalist.entities.ModEntities;
+import net.electro.elementalist.item.ElementalistGrimoire;
 import net.electro.elementalist.item.bracelets.BraceletMaster;
 import net.electro.elementalist.networking.ModMessages;
 import net.electro.elementalist.networking.packet.ActivateShieldC2SPacket;
@@ -114,6 +116,16 @@ public class ClientEvents {
                         ModMessages.sendToServer(new ActivateSpellC2SPacket(3));
                     } else {
                         ModMessages.sendToServer(new ActivateSpellC2SPacket(1));
+                    }
+                }
+            }
+            if (heldItem.getItem() instanceof ElementalistGrimoire) {
+                if (event.isUseItem()) {
+                    event.setCanceled(true);
+                    if (mc.screen == null) {
+                        mc.setScreen(new GrimoireScreen());
+                    } else if (mc.screen instanceof GrimoireScreen) {
+                        mc.player.closeContainer();
                     }
                 }
             }

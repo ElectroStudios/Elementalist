@@ -1,7 +1,8 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"grimoire_open": {
+		"grimoire_open_process": {
+			"loop": "hold_on_last_frame",
 			"animation_length": 0.5,
 			"bones": {
 				"left": {
@@ -43,6 +44,38 @@
 							"vector": [0, 0, 15],
 							"easing": "easeInOutSine"
 						}
+					}
+				}
+			}
+		},
+		"grimoire_open_loop": {
+			"loop": true,
+			"animation_length": 0.5,
+			"bones": {
+				"left": {
+					"relative_to": {
+						"rotation": "entity"
+					},
+					"rotation": {
+						"vector": [0, 70, 15],
+						"easing": "easeInOutSine"
+					}
+				},
+				"right": {
+					"relative_to": {
+						"rotation": "entity"
+					},
+					"rotation": {
+						"vector": [0, -70, 15]
+					}
+				},
+				"middle": {
+					"relative_to": {
+						"rotation": "entity"
+					},
+					"rotation": {
+						"vector": [0, 0, 15],
+						"easing": "easeInOutSine"
 					}
 				}
 			}

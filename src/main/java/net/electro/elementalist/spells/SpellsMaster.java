@@ -7,6 +7,8 @@ import net.electro.elementalist.util.Element;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.List;
+
 public abstract class SpellsMaster {
     public DamageType damageType;
     public int manaCost;
@@ -14,6 +16,7 @@ public abstract class SpellsMaster {
     public int spellCooldownTicks;
     public ResourceLocation spellIcon;
     public String spellString;
+    public List<Integer> children;
 
     protected void initialize_spell(Player player) {
 
