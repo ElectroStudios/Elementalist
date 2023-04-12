@@ -8,6 +8,9 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.server.ServerLifecycleHooks;
+
+import java.util.List;
 
 public class ModMessages {
     private static SimpleChannel INSTANCE;
@@ -57,6 +60,36 @@ public class ModMessages {
                 .consumerMainThread(ManaSyncS2CPacket::handle)
                 .add();
 
+        net.messageBuilder(ElementLevelSyncS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(ElementLevelSyncS2CPacket::new)
+                .encoder(ElementLevelSyncS2CPacket::toBytes)
+                .consumerMainThread(ElementLevelSyncS2CPacket::handle)
+                .add();
+
+        net.messageBuilder(ElementExperienceSyncS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(ElementExperienceSyncS2CPacket::new)
+                .encoder(ElementExperienceSyncS2CPacket::toBytes)
+                .consumerMainThread(ElementExperienceSyncS2CPacket::handle)
+                .add();
+
+        net.messageBuilder(ElementSkillPointsSyncS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(ElementSkillPointsSyncS2CPacket::new)
+                .encoder(ElementSkillPointsSyncS2CPacket::toBytes)
+                .consumerMainThread(ElementSkillPointsSyncS2CPacket::handle)
+                .add();
+
+        net.messageBuilder(UnlockedSpellsSyncS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(UnlockedSpellsSyncS2CPacket::new)
+                .encoder(UnlockedSpellsSyncS2CPacket::toBytes)
+                .consumerMainThread(UnlockedSpellsSyncS2CPacket::handle)
+                .add();
+
+        net.messageBuilder(PlayerLevelSyncS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(PlayerLevelSyncS2CPacket::new)
+                .encoder(PlayerLevelSyncS2CPacket::toBytes)
+                .consumerMainThread(PlayerLevelSyncS2CPacket::handle)
+                .add();
+
         net.messageBuilder(ExplosionEffectsS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ExplosionEffectsS2CPacket::new)
                 .encoder(ExplosionEffectsS2CPacket::toBytes)
@@ -81,6 +114,14 @@ public class ModMessages {
 
     public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), message);
+    }
+
+    public static <MSG> void sendToAllPlayers(MSG message) {
+        List<ServerPlayer> players = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
+        for (ServerPlayer player : players)
+        {
+            sendToPlayer(message, player);
+        }
     }
 
 }

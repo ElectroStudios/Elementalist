@@ -7,6 +7,7 @@ import net.electro.elementalist.spells.SpellsMaster;
 import net.electro.elementalist.util.DamageType;
 import net.electro.elementalist.util.Element;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class WaterSlashSpell extends SpellsMaster {
         children = List.of(5);
     }
     @Override
-    protected void initialize_spell(Player player) {
+    protected void initialize_spell(LivingEntity player) {
         WaterSlashEntity waterSlash = new WaterSlashEntity(player, damageType);
         player.level.addFreshEntity(waterSlash);
     }

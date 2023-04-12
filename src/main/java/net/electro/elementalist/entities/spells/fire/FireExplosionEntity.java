@@ -2,8 +2,10 @@ package net.electro.elementalist.entities.spells.fire;
 
 import net.electro.elementalist.client.particle.ModParticles;
 import net.electro.elementalist.entities.ModEntities;
+import net.electro.elementalist.entities.spells.ShieldSpellEntity;
 import net.electro.elementalist.entities.spells.SpellMasterEntity;
 import net.electro.elementalist.util.DamageType;
+import net.electro.elementalist.util.RayTraceResult;
 import net.electro.elementalist.util.Utility;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -43,6 +45,15 @@ public class FireExplosionEntity extends SpellMasterEntity {
             setRadius((float) blockHitResult.getLocation().subtract(this.position()).length());
         }
         this.targetPos = blockHitResult.getLocation();
+        RayTraceResult rayTraceResult = Utility.rayTraceEntities(this.level, getOwner(), this.position(),
+                this.getForward(), MAX_RADIUS, 1, entity -> entity instanceof ShieldSpellEntity || entity instanceof LivingEntity);
+        if (rayTraceResult.HIT) {
+            double distanceToShield = this.position().subtract(rayTraceResult.HIT_LOCATION).length();
+            if (getRadius() > distanceToShield) {
+                setRadius((float)distanceToShield);
+                this.targetPos = rayTraceResult.HIT_LOCATION;
+            }
+        }
     }
 
     public void setRadius(float radius) {

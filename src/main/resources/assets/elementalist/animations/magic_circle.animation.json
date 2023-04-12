@@ -1,0 +1,38 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.magic_circle.clockwise": {
+			"loop": true,
+			"animation_length": 2,
+			"bones": {
+				"circlebone": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 360]
+						}
+					}
+				}
+			}
+		},
+		"animation.magic_circle.counterclockwise": {
+			"loop": true,
+			"animation_length": 2,
+			"bones": {
+				"circlebone": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, -360]
+						}
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}

@@ -27,13 +27,12 @@ public class FirePulseEntity extends SpellMasterEntity {
     }
 
     private void DealDamage() {
-        DamageDealer dd = new DamageDealer(this.position(), getOwner(), this, this.ignoredEntities) {
+        DamageDealer dd = new DamageDealer(this.position(), getOwner(), this, this.ignoredEntities, this.damageType) {
             @Override
             public void damageEffects(LivingEntity entity, float effectAmount, Vec3 direction) {
                 entity.setSecondsOnFire(damageType.ADDITIONAL_EFFECT_MULTIPLIER);
-                entity.hurt(DamageSource.indirectMagic(SOURCE, OWNER), damageType.BASE_DAMAGE);
-                entity.knockback(damageType.KNOCKBACK, direction.x, direction.z);
                 ignoredEntities.add(entity);
+                super.damageEffects(entity, effectAmount, direction);
             }
         };
         dd.dealDamageSphere((1 - (duration / (float) DURATION_MAX)) * RADIUS, 3);

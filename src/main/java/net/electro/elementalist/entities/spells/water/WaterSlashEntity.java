@@ -43,11 +43,10 @@ public class WaterSlashEntity extends SpellMasterEntity {
             return !entity.isSpectator() && entity.isPickable();
         }));
         foundEntities.removeAll(this.ignoredEntities);
-        DamageDealer dd = new DamageDealer(this.position(), getOwner(), this, this.ignoredEntities) {
+        DamageDealer dd = new DamageDealer(this.position(), getOwner(), this, this.ignoredEntities, this.damageType) {
             @Override
             public void damageEffects(LivingEntity entity, float effectAmount, Vec3 direction) {
-                entity.hurt(DamageSource.indirectMagic(SOURCE, OWNER), damageType.BASE_DAMAGE);
-                entity.knockback(damageType.KNOCKBACK, direction.x, direction.z);
+                super.damageEffects(entity, effectAmount, direction);
             }
         };
         for (LivingEntity entity : foundEntities) {

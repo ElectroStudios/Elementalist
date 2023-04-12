@@ -2,6 +2,9 @@ package net.electro.elementalist.entities.spells;
 
 import net.electro.elementalist.entities.ModEntities;
 import net.electro.elementalist.entities.projectiles.MasterSpellProjectile;
+import net.electro.elementalist.networking.ModMessages;
+import net.electro.elementalist.networking.packet.ExplosionEffectsS2CPacket;
+import net.electro.elementalist.util.DamageType;
 import net.electro.elementalist.util.IExplosionEffects;
 import net.electro.elementalist.util.ParticleUtil;
 import net.minecraft.core.particles.ParticleTypes;
@@ -38,6 +41,7 @@ public class ShieldSpellEntity extends Entity implements IAnimatable, IExplosion
     @Nullable
     private UUID ownerUUID;
     private int duration = 100;
+    private float shieldStrength = 11;
     private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
     public ShieldSpellEntity(EntityType<?> pEntityType, Level pLevel) {
@@ -51,6 +55,11 @@ public class ShieldSpellEntity extends Entity implements IAnimatable, IExplosion
         setPos(owner.getEyePosition().add(owner.getForward().multiply(2, 2, 2)).subtract(0, 1.5f, 0));
         setRot(owner.yHeadRot, owner.getXRot());
         this.noPhysics = true;
+        this.level.addFreshEntity(new MagicCircleEntity(this.position(), this.getYRot(), this.getXRot(), this.level,
+                100, 1f, true, 0xFFFFB1A8));
+
+        this.level.addFreshEntity(new MagicCircleEntity(this.position().add(this.getForward()), this.getYRot(),
+                this.getXRot(), this.level, 100, 1f, false, 0xFFFFB1A8));
     }
 
     @Override
@@ -88,8 +97,23 @@ public class ShieldSpellEntity extends Entity implements IAnimatable, IExplosion
     private void handleHitProjectile(Projectile projectile) {
         if (projectile instanceof MasterSpellProjectile masterSpellProjectile) {
             if (!this.level.isClientSide()) {
-                masterSpellProjectile.discard();
+                if (!calculateWinningSide(masterSpellProjectile.damageType)) {
+                    masterSpellProjectile.explode();
+                }
             }
+        }
+    }
+
+    public boolean calculateWinningSide(DamageType damageType) {
+        if (damageType.BASE_DAMAGE >= shieldStrength)
+        {
+            ModMessages.sendToAllPlayers(new ExplosionEffectsS2CPacket(this.getId()));
+            this.discard();
+            return true;
+        }
+        else {
+            ModMessages.sendToAllPlayers(new ExplosionEffectsS2CPacket(this.getId()));
+            return false;
         }
     }
 

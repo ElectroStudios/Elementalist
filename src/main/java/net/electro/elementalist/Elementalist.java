@@ -1,6 +1,8 @@
 package net.electro.elementalist;
 
 import com.mojang.logging.LogUtils;
+import net.electro.elementalist.block.ModBlocks;
+import net.electro.elementalist.block.entity.ModBlockEntities;
 import net.electro.elementalist.client.particle.ModParticles;
 import net.electro.elementalist.entities.ModEntities;
 import net.electro.elementalist.item.ModItems;
@@ -29,6 +31,10 @@ public class Elementalist
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ModItems.register(modEventBus);
+
+        ModBlocks.register(modEventBus);
+
+        ModBlockEntities.register(modEventBus);
 
         ModEntities.ENTITIES.register(modEventBus);
 

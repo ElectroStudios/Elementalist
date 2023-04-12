@@ -17,13 +17,14 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.List;
 
 public abstract class MasterSpellProjectile extends Projectile implements IExplosionEffects {
     protected float speed;
-    protected DamageType damageType;
+    public DamageType damageType;
     public MasterSpellProjectile(EntityType<? extends MasterSpellProjectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         this.noPhysics = true;
@@ -81,11 +82,7 @@ public abstract class MasterSpellProjectile extends Projectile implements IExplo
     }
 
     public void explode() {
-        List<ServerPlayer> players = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
-        for (ServerPlayer player : players)
-        {
-            ModMessages.sendToPlayer(new ExplosionEffectsS2CPacket(this.getId()), player);
-        }
+        ModMessages.sendToAllPlayers(new ExplosionEffectsS2CPacket(this.getId()));
         this.discard();
     }
 

@@ -1,20 +1,62 @@
 {
-  "elementalist.spell_names.fireball":  "Fireball",
-  "elementalist.spell_names.fire_pulse":  "Fire pulse",
-  "elementalist.spell_names.fire_breath":  "Fire breath",
-  "elementalist.spell_names.fire_explosion":  "Fire explosion",
+  "elementalist.spell_name.fireball":  "Fireball",
+  "elementalist.spell_name.fire_pulse":  "Fire pulse",
+  "elementalist.spell_name.fire_breath":  "Fire breath",
+  "elementalist.spell_name.fire_explosion":  "Fire explosion",
+  "elementalist.spell_name.fire_wave":  "Fire wave",
+  "elementalist.spell_name.fire_cluster_explosion":  "Cluster explosion",
+  
+  "elementalist.spell_name.water_slash":  "Water slash",
+  "elementalist.spell_name.water_stream":  "Water stream",
 
-  "elementalist.spell_names.water_slash":  "Water slash",
-  "elementalist.spell_names.water_stream":  "Water stream",
+  "elementalist.spell_name.ice_spear":  "Ice spear",
 
-  "elementalist.spell_names.ice_spear":  "Ice spear",
+
+  "elementalist.spell_description.fireball":  "Basic fire spell. Create a slow moving projectile that damages enemies and sets them on fire.",
+  "elementalist.spell_description.fire_pulse":  "An expanding ring of fire ignites and damages all enemies around you.",
+  "elementalist.spell_description.fire_breath":  "Launches a flame forward, which deals damage, knockback and ignites enemies.",
+  "elementalist.spell_description.fire_explosion":  "Fire a concentrated beam of flames, which creates a devastating explosion after some time.",
+  "elementalist.spell_description.fire_wave":  "Ignites the ground and sends enemies flying after a certain delay.",
+  "elementalist.spell_description.fire_cluster_explosion":  "Creates a series of fire explosions in front of you.",
+
+  "elementalist.spell_description.water_slash":  "A short range attack that deals a lot of damage and knocks back enemies.",
+  "elementalist.spell_description.water_stream":  "Fire a stream of water forward knocking back enemies and dealing damage.",
+
+  "elementalist.spell_description.ice_spear":  "A long range fast moving projectile that slows down enemies and deals a lot of damage.",
+
+
+  "elementalist.element_name.fire": "Fire",
+  "elementalist.element_name.water": "Water",
+  "elementalist.element_name.ice": "Ice",
+  "elementalist.element_name.air": "Air",
+  "elementalist.element_name.lightning": "Lightning",
+  "elementalist.element_name.earth": "Earth",
+  "elementalist.element_name.life": "Life",
+  "elementalist.element_name.death": "Death",
+
+
+  "elementalist.element_description.fire": "Medium range magic. Sets enemies on fire dealing additional damage. Can be combined with life spells that make gas or with earth spells that make oil. Effective against life. Ineffective against water.",
+
+
+  "elementalist.level": "Level",
+  "elementalist.skill_points": "Skill Points",
+  "elementalist.unlock_button": "Unlock",
+  "elementalist.unlocked_button": "Unlocked",
+
 
   "item.elementalist.fire_bracelet_iron": "Fire iron bracelet",
   "item.elementalist.water_bracelet_iron": "Water iron bracelet",
   "item.elementalist.ice_bracelet_iron": "Ice iron bracelet",
   "item.elementalist.elementalist_grimoire": "Elementalist Grimoire",
+  "item.elementalist.uncharged_staff": "Uncharged staff",
+  "item.elementalist.water_spirit_spawn_egg": "Water Spirit Spawn Egg",
+
 
   "itemGroup.elementalist": "Elementalist",
+
+
+  "block.elementalist.altar": "Altar",
+
 
   "key.category.elementalist.elementalist": "Elementalist",
   "key.elementalist.select_spell": "Select Spell",

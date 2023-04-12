@@ -1,7 +1,8 @@
 package net.electro.elementalist.networking.packet;
 
-import net.electro.elementalist.item.bracelets.BraceletMaster;
-import net.electro.elementalist.util.SpellIdMap;
+import net.electro.elementalist.data.ElementalistStatsProvider;
+import net.electro.elementalist.item.bracelets.ChargedStaff;
+import net.electro.elementalist.util.ElementalistMaps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,10 +31,14 @@ public class ActivateSpellC2SPacket {
             ServerPlayer player = context.getSender();
             ServerLevel level = player.getLevel();
             ItemStack heldItem = player.getMainHandItem();
-            if (heldItem.getItem() instanceof BraceletMaster bracelet) {
+            if (heldItem.getItem() instanceof ChargedStaff bracelet) {
                 if (bracelet.hasNbtData(spellSlot, heldItem)) {
                     int spellId = bracelet.getNbtData(spellSlot, heldItem);
-                    SpellIdMap.map.get(spellId).activate(player);
+                    player.getCapability(ElementalistStatsProvider.ELEMENTALIST_STATS).ifPresent(elementalistStats -> {
+                        if (elementalistStats.getUnlockedSpellsList().contains(spellId)) {
+                            ElementalistMaps.spellMap.get(spellId).activate(player);
+                        }
+                    });
                 }
             }
         });

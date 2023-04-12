@@ -1,12 +1,12 @@
 package net.electro.elementalist.entities;
 
 import net.electro.elementalist.Elementalist;
+import net.electro.elementalist.entities.mobs.WaterSpiritEntity;
 import net.electro.elementalist.entities.projectiles.FireballBasic;
 import net.electro.elementalist.entities.projectiles.IceSpear;
+import net.electro.elementalist.entities.spells.MagicCircleEntity;
 import net.electro.elementalist.entities.spells.ShieldSpellEntity;
-import net.electro.elementalist.entities.spells.fire.FireBreathEntity;
-import net.electro.elementalist.entities.spells.fire.FireExplosionEntity;
-import net.electro.elementalist.entities.spells.fire.FirePulseEntity;
+import net.electro.elementalist.entities.spells.fire.*;
 import net.electro.elementalist.entities.spells.water.WaterSlashEntity;
 import net.electro.elementalist.entities.spells.water.WaterStreamEntity;
 import net.minecraft.resources.ResourceLocation;
@@ -36,6 +36,20 @@ public class ModEntities {
             () -> EntityType.Builder.<FireExplosionEntity>of(FireExplosionEntity::new, MobCategory.MISC)
                     .build(new ResourceLocation(Elementalist.MOD_ID, "fire_explosion").toString()));
 
+    public static final RegistryObject<EntityType<FireWaveEntity>> FIRE_WAVE = ENTITIES.register("fire_wave",
+            () -> EntityType.Builder.<FireWaveEntity>of(FireWaveEntity::new, MobCategory.MISC)
+                    .build(new ResourceLocation(Elementalist.MOD_ID, "fire_wave").toString()));
+
+    public static final RegistryObject<EntityType<FireClusterExplosionEntity>> FIRE_CLUSTER_EXPLOSION =
+            ENTITIES.register("fire_cluster_explosion",
+            () -> EntityType.Builder.<FireClusterExplosionEntity>of(FireClusterExplosionEntity::new, MobCategory.MISC)
+                    .build(new ResourceLocation(Elementalist.MOD_ID, "fire_cluster_explosion").toString()));
+    
+    public static final RegistryObject<EntityType<FireClusterExplosionPartEntity>> FIRE_CLUSTER_EXPLOSION_PART =
+            ENTITIES.register("fire_cluster_explosion_part",
+            () -> EntityType.Builder.<FireClusterExplosionPartEntity>of(FireClusterExplosionPartEntity::new, MobCategory.MISC)
+                    .build(new ResourceLocation(Elementalist.MOD_ID, "fire_cluster_explosion_part").toString()));
+    
     public static final RegistryObject<EntityType<WaterSlashEntity>> WATER_SLASH = ENTITIES.register("water_slash",
             () -> EntityType.Builder.<WaterSlashEntity>of(WaterSlashEntity::new, MobCategory.MISC)
                     .sized(8f, 0.6f)
@@ -55,4 +69,14 @@ public class ModEntities {
             () -> EntityType.Builder.<ShieldSpellEntity>of(ShieldSpellEntity::new, MobCategory.MISC)
                     .sized(3f, 3f)
                     .build(new ResourceLocation(Elementalist.MOD_ID, "shield_spell").toString()));
+
+    public static final RegistryObject<EntityType<MagicCircleEntity>> MAGIC_CIRCLE = ENTITIES.register("magic_circle",
+            () -> EntityType.Builder.<MagicCircleEntity>of(MagicCircleEntity::new, MobCategory.MISC)
+                    .sized(0.1f, 0.1f)
+                    .build(new ResourceLocation(Elementalist.MOD_ID, "magic_circle").toString()));
+
+    public static final RegistryObject<EntityType<WaterSpiritEntity>> WATER_SPIRIT = ENTITIES.register("water_spirit",
+            () -> EntityType.Builder.<WaterSpiritEntity>of(WaterSpiritEntity::new, MobCategory.MONSTER)
+                    .sized(0.4f, 1.5f)
+                    .build(new ResourceLocation(Elementalist.MOD_ID, "water_spirit").toString()));
 }

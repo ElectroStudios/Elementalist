@@ -51,7 +51,7 @@ public class IceSpear extends MasterSpellProjectile {
             if (pResult.getType() == HitResult.Type.ENTITY) {
                 if (((EntityHitResult)pResult).getEntity() instanceof LivingEntity hitEntity) {
                     hitEntity.knockback(damageType.KNOCKBACK, this.getForward().x, this.getForward().z);
-                    hitEntity.hurt(DamageSource.indirectMagic(this, this.getOwner()), damageType.BASE_DAMAGE);
+                    hitEntity.hurt(DamageSource.indirectMagic(this, this.getOwner()), damageType.calculateDamage((LivingEntity) this.getOwner(), hitEntity));
                 }
             }
         }

@@ -12,14 +12,17 @@ import net.electro.elementalist.client.models.spellentities.WaterStreamModel;
 import net.electro.elementalist.client.particle.ModParticles;
 import net.electro.elementalist.client.particle.fire.FireExplosionParticles;
 import net.electro.elementalist.client.particle.fire.FireFlashParticles;
+import net.electro.elementalist.client.renderer.mobs.WaterSpiritRenderer;
 import net.electro.elementalist.client.renderer.projectiles.FireballBasicRenderer;
 import net.electro.elementalist.client.renderer.projectiles.IceSpearRenderer;
+import net.electro.elementalist.client.renderer.spellentities.MagicCircleRenderer;
 import net.electro.elementalist.client.renderer.spellentities.ShieldSpellRenderer;
 import net.electro.elementalist.client.renderer.spellentities.WaterSlashRenderer;
 import net.electro.elementalist.client.renderer.spellentities.WaterStreamRenderer;
 import net.electro.elementalist.entities.ModEntities;
+import net.electro.elementalist.entities.mobs.WaterSpiritEntity;
 import net.electro.elementalist.item.ElementalistGrimoire;
-import net.electro.elementalist.item.bracelets.BraceletMaster;
+import net.electro.elementalist.item.bracelets.ChargedStaff;
 import net.electro.elementalist.networking.ModMessages;
 import net.electro.elementalist.networking.packet.ActivateShieldC2SPacket;
 import net.electro.elementalist.networking.packet.ActivateSpellC2SPacket;
@@ -32,8 +35,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.security.Key;
+import org.lwjgl.opengl.GL11;
 
 public class ClientEvents {
     @Mod.EventBusSubscriber(modid= Elementalist.MOD_ID, value = Dist.CLIENT)
@@ -44,6 +46,8 @@ public class ClientEvents {
         @SubscribeEvent
         public static void renderHUD(final RenderGuiOverlayEvent.Post event) {
             spellStateGui.drawHUD(event.getPoseStack());
+
+
         }
         @SubscribeEvent
         public static void onKeyInput(InputEvent.Key event) {
@@ -57,7 +61,7 @@ public class ClientEvents {
                     if (ClientSpellStateData.isInAltInterval()) {
                         ClientSpellStateData.setAltInterval(0);
                         ItemStack heldItem = mc.player.getMainHandItem();
-                        if (heldItem.getItem() instanceof BraceletMaster) {
+                        if (heldItem.getItem() instanceof ChargedStaff) {
                             ModMessages.sendToServer(new ActivateShieldC2SPacket());
                         }
                     }
@@ -73,7 +77,7 @@ public class ClientEvents {
 
             if (mc.screen == null || mc.screen instanceof SpellSelectWheelGui) {
                 ItemStack heldItem = mc.player.getMainHandItem();
-                if (heldItem.getItem() instanceof BraceletMaster) {
+                if (heldItem.getItem() instanceof ChargedStaff) {
                     if (event.getKey() == KeyBinding.SPELL_SELECT_KEY.getKey().getValue()) {
                         if (mc.screen instanceof SpellSelectWheelGui && event.getAction() == 0) {
                             mc.player.closeContainer();
@@ -99,7 +103,7 @@ public class ClientEvents {
             }
 
             ItemStack heldItem = player.getMainHandItem();
-            if (heldItem.getItem() instanceof BraceletMaster) {
+            if (heldItem.getItem() instanceof ChargedStaff) {
                 if (event.isAttack()) {
                     event.setSwingHand(false);
                     event.setCanceled(true);
@@ -154,10 +158,15 @@ public class ClientEvents {
             event.registerEntityRenderer(ModEntities.FIRE_PULSE.get(), NoopRenderer::new);
             event.registerEntityRenderer(ModEntities.FIRE_BREATH.get(), NoopRenderer::new);
             event.registerEntityRenderer(ModEntities.FIRE_EXPLOSION.get(), NoopRenderer::new);
+            event.registerEntityRenderer(ModEntities.FIRE_WAVE.get(), NoopRenderer::new);
+            event.registerEntityRenderer(ModEntities.FIRE_CLUSTER_EXPLOSION.get(), NoopRenderer::new);
+            event.registerEntityRenderer(ModEntities.FIRE_CLUSTER_EXPLOSION_PART.get(), NoopRenderer::new);
             event.registerEntityRenderer(ModEntities.WATER_SLASH.get(), WaterSlashRenderer::new);
             event.registerEntityRenderer(ModEntities.WATER_STREAM.get(), WaterStreamRenderer::new);
             event.registerEntityRenderer(ModEntities.ICE_SPEAR.get(), IceSpearRenderer::new);
             event.registerEntityRenderer(ModEntities.SHIELD_SPELL.get(), ShieldSpellRenderer::new);
+            event.registerEntityRenderer(ModEntities.MAGIC_CIRCLE.get(), MagicCircleRenderer::new);
+            event.registerEntityRenderer(ModEntities.WATER_SPIRIT.get(), WaterSpiritRenderer::new);
         }
 
         @SubscribeEvent

@@ -2,11 +2,9 @@ package net.electro.elementalist.entities.projectiles;
 
 import net.electro.elementalist.client.particle.ModParticles;
 import net.electro.elementalist.entities.ModEntities;
-import net.electro.elementalist.util.DamageDealer;
-import net.electro.elementalist.util.DamageType;
-import net.electro.elementalist.util.ParticleUtil;
-import net.electro.elementalist.util.Utility;
+import net.electro.elementalist.util.*;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -57,15 +55,16 @@ public class FireballBasic extends MasterSpellProjectile {
     @Override
     public void explode() {
         if (!this.level.isClientSide()) {
-            DamageDealer dd = new DamageDealer(this.position(), (LivingEntity) Objects.requireNonNull(this.getOwner()), this) {
+            DamageDealer dd = new DamageDealer(this.position(), (LivingEntity) Objects.requireNonNull(this.getOwner()),
+                    this, this.damageType) {
                 @Override
                 public void damageEffects(LivingEntity entity, float effectAmount, Vec3 direction) {
                     entity.setSecondsOnFire(damageType.ADDITIONAL_EFFECT_MULTIPLIER);
-                    entity.hurt(DamageSource.indirectMagic(SOURCE, OWNER), damageType.BASE_DAMAGE * effectAmount);
-                    entity.knockback(effectAmount * damageType.KNOCKBACK, direction.x, direction.z);
+                    super.damageEffects(entity, effectAmount, direction);
                 }
             };
             dd.dealDamageSphere(EXPLOSION_RADIUS, EXPLOSION_RADIUS);
+            dd.setBlocksInRadius(1, 0.3f);
         }
         super.explode();
     }

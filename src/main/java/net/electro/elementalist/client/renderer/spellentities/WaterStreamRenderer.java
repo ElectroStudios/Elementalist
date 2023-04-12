@@ -27,7 +27,8 @@ public class WaterStreamRenderer extends SpellMasterRenderer<WaterStreamEntity> 
         pPoseStack.pushPose();
         pPoseStack.mulPose(Vector3f.YP.rotationDegrees(-pEntity.getYRot() + 180));
         pPoseStack.mulPose(Vector3f.XP.rotationDegrees(-pEntity.getXRot()));
-        pPoseStack.scale(1f, 1f, 4f);
+        pPoseStack.scale(1f, 1f,
+                4f * (((WaterStreamEntity)pEntity).getDistance() / ((WaterStreamEntity)pEntity).MAX_DISTANCE));
         this.model.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 0.7F);
         pPoseStack.popPose();
         super.render(pEntity, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight);

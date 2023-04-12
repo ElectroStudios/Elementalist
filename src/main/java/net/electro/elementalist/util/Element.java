@@ -6,6 +6,7 @@ public enum Element {
     AIR,
     LIGHTNING,
     ICE,
-    NATURE,
-    EARTH
+    LIFE,
+    EARTH,
+    DEATH
 }

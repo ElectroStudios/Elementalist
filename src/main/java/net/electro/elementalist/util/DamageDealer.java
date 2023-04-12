@@ -1,12 +1,16 @@
 package net.electro.elementalist.util;
 
+import net.electro.elementalist.entities.spells.ShieldSpellEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.phys.*;
 
 import java.util.ArrayList;
@@ -19,26 +23,31 @@ public class DamageDealer {
     protected final Entity SOURCE;
     protected final Level LEVEL;
     protected final List<LivingEntity> IGNORED_ENTITIES;
-    public DamageDealer(Vec3 pos, LivingEntity owner, Entity source, List<LivingEntity> ignoredEntities) {
+    protected final DamageType DAMAGE_TYPE;
+    public DamageDealer(Vec3 pos, LivingEntity owner, Entity source, List<LivingEntity> ignoredEntities, DamageType damageType) {
         this.OWNER = owner;
         this.SOURCE = source;
         this.POS = pos;
         this.LEVEL = owner.level;
         this.IGNORED_ENTITIES = ignoredEntities;
+        this.DAMAGE_TYPE = damageType;
     }
 
-    public DamageDealer(Vec3 pos, LivingEntity owner, Entity source) {
+    public DamageDealer(Vec3 pos, LivingEntity owner, Entity source, DamageType damageType) {
         this.OWNER = owner;
         this.SOURCE = source;
         this.POS = pos;
         this.LEVEL = owner.level;
         this.IGNORED_ENTITIES = new ArrayList<>();
+        this.DAMAGE_TYPE = damageType;
     }
 
     public void damageEffects(LivingEntity entity, float effectAmount, Vec3 direction) {
+        entity.hurt(DamageSource.indirectMagic(this.SOURCE, this.OWNER), this.DAMAGE_TYPE.calculateDamage(this.OWNER, entity));
+        entity.knockback(effectAmount * this.DAMAGE_TYPE.KNOCKBACK, direction.x, direction.z);
     }
 
-    public boolean checkForLineOfSight(LivingEntity entity) {
+    public boolean checkForLineOfSight(Entity entity) {
         BlockHitResult blockHitResult1 = this.LEVEL.clip(new ClipContext(POS, entity.position(),
                 ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this.SOURCE));
         BlockHitResult blockHitResult2 = this.LEVEL.clip(new ClipContext(POS, entity.getEyePosition(),
@@ -46,12 +55,44 @@ public class DamageDealer {
         return blockHitResult1.getType() == HitResult.Type.MISS || blockHitResult2.getType() == HitResult.Type.MISS;
     }
 
+    public void setBlocksInRadius(int radius, float probability) {
+        List<BlockPos> blocks = new ArrayList<>();
+        BlockPos blockPos = new BlockPos(this.POS);
+
+        for (int aX = -radius; aX <= radius; aX++) {
+            for (int aY = -radius; aY <= radius; aY++) {
+                for (int aZ = -radius; aZ <= radius; aZ++) {
+                    blocks.add(blockPos.offset(aX, aY, aZ));
+                }
+            }
+        }
+
+        for(BlockPos pos : blocks) {
+            if (this.LEVEL.getRandom().nextFloat() <= probability && this.LEVEL.getBlockState(pos).isAir()
+                    && this.LEVEL.getBlockState(pos.below()).isSolidRender(this.LEVEL, pos.below())) {
+                this.LEVEL.setBlockAndUpdate(pos, BaseFireBlock.getState(this.LEVEL, pos));
+            }
+        }
+    }
+
     public void dealDamageSphere(float radius, float height)
     {
         AABB volume = new AABB(POS.x - radius, POS.y - height, POS.z - radius,
                 POS.x + radius, POS.y + height, POS.z + radius);
         List<LivingEntity> entityList = this.LEVEL.getEntitiesOfClass(LivingEntity.class, volume);
+        List<ShieldSpellEntity> shieldEntityList = this.LEVEL.getEntitiesOfClass(ShieldSpellEntity.class, volume);
         entityList.removeAll(IGNORED_ENTITIES);
+        if (!shieldEntityList.isEmpty()) {
+            for (ShieldSpellEntity entity : shieldEntityList) {
+                double distance = POS.distanceTo(entity.position());
+                if (distance < radius && checkForLineOfSight(entity)) {
+                    if (!entity.calculateWinningSide(this.DAMAGE_TYPE)) {
+                        SOURCE.discard();
+                        return;
+                    }
+                }
+            }
+        }
         if (!entityList.isEmpty()) {
             for (LivingEntity entity : entityList) {
                 double distance = POS.distanceTo(entity.position());
@@ -66,18 +107,37 @@ public class DamageDealer {
         AABB volume = new AABB(POS.x - radius, POS.y - radius, POS.z - radius,
                 POS.x + radius, POS.y + radius, POS.z + radius);
         List<LivingEntity> entityList = this.LEVEL.getEntitiesOfClass(LivingEntity.class, volume);
+        List<ShieldSpellEntity> shieldEntityList = this.LEVEL.getEntitiesOfClass(ShieldSpellEntity.class, volume);
         entityList.removeAll(IGNORED_ENTITIES);
+        if (!shieldEntityList.isEmpty()) {
+            for (ShieldSpellEntity entity : shieldEntityList) {
+                    double distance = POS.distanceTo(entity.position());
+                    Vec3 directionToEntity = getDirectionToEntity(entity);
+                    if (isEntityInCone(entity, angle, radius, distance, directionToEntity))
+                    {
+                        if (!entity.calculateWinningSide(DAMAGE_TYPE))
+                        {
+                            SOURCE.discard();
+                            return;
+                        }
+                    }
+                }
+            }
         if (!entityList.isEmpty()) {
             for (LivingEntity entity : entityList) {
                 double distance = POS.distanceTo(entity.position());
-                Vec3 spellDirection = Vec3.directionFromRotation(SOURCE.getRotationVector());
                 Vec3 directionToEntity = getDirectionToEntity(entity);
-                double angleToEntity = 180 - Math.toDegrees(Math.acos(spellDirection.dot(directionToEntity)/(spellDirection.length() * directionToEntity.length())));
-                if (distance < radius && angleToEntity <= angle && checkForLineOfSight(entity)) {
+                if (isEntityInCone(entity, angle, radius, distance, directionToEntity)) {
                     damageEffects(entity, (float) (1 - distance / radius), directionToEntity);
                 }
             }
         }
+    }
+
+    public boolean isEntityInCone(Entity entity, float angle, float radius, double distance, Vec3 directionToEntity) {
+        Vec3 spellDirection = SOURCE.getForward();
+        double angleToEntity = 180 - Math.toDegrees(Math.acos(spellDirection.dot(directionToEntity) / (spellDirection.length() * directionToEntity.length())));
+        return distance < radius && angleToEntity <= angle && checkForLineOfSight(entity);
     }
 
     public void dealDamageTube(float radius, float distance, Vec3 knockbackDirection) {

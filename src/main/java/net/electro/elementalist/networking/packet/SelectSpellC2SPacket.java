@@ -1,10 +1,7 @@
 package net.electro.elementalist.networking.packet;
 
-import net.electro.elementalist.data.ElementalistStatsProvider;
-import net.electro.elementalist.item.bracelets.BraceletMaster;
-import net.minecraft.ChatFormatting;
+import net.electro.elementalist.item.bracelets.ChargedStaff;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +33,7 @@ public class SelectSpellC2SPacket {
             ServerPlayer player = context.getSender();
             ServerLevel level = player.getLevel();
             ItemStack heldItem = player.getMainHandItem();
-            if (heldItem.getItem() instanceof BraceletMaster bracelet) {
+            if (heldItem.getItem() instanceof ChargedStaff bracelet) {
                 bracelet.addNbtData(slotId, spellId, heldItem);
             }
 

@@ -3,6 +3,8 @@ package net.electro.elementalist.networking.packet;
 import net.electro.elementalist.client.ClientSpellStateData;
 import net.electro.elementalist.util.IExplosionEffects;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;

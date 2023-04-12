@@ -5,13 +5,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.client.ClientSpellStateData;
-import net.electro.elementalist.item.bracelets.BraceletMaster;
+import net.electro.elementalist.item.bracelets.ChargedStaff;
 import net.electro.elementalist.spells.SpellsMaster;
-import net.electro.elementalist.util.SpellIdMap;
+import net.electro.elementalist.util.ElementalistMaps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -23,15 +22,15 @@ public class SpellStateGui extends GuiComponent {
     ResourceLocation manaTexture = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/mana.png");
     public boolean shouldDisplayHUD() {
         ItemStack mainHand = mc.player.getMainHandItem();
-        return mainHand.getItem() instanceof BraceletMaster;
+        return mainHand.getItem() instanceof ChargedStaff;
     }
 
     private void drawSpellFrame(PoseStack poseStack, float x, float y, int selectedSpellNumber) {
         ItemStack heldItem = mc.player.getMainHandItem();
-        if (((BraceletMaster)heldItem.getItem()).hasNbtData(selectedSpellNumber, heldItem)) {
-            int spellId = ((BraceletMaster) heldItem.getItem()).getNbtData(selectedSpellNumber, heldItem);
+        if (((ChargedStaff)heldItem.getItem()).hasNbtData(selectedSpellNumber, heldItem)) {
+            int spellId = ((ChargedStaff) heldItem.getItem()).getNbtData(selectedSpellNumber, heldItem);
             int currentCooldown = ClientSpellStateData.getCooldown(spellId);
-            SpellsMaster spell = SpellIdMap.map.get(spellId);
+            SpellsMaster spell = ElementalistMaps.spellMap.get(spellId);
             ResourceLocation spellIcon = spell.spellIcon;
 
             poseStack.pushPose();

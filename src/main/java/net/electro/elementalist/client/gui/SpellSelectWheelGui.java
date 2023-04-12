@@ -5,18 +5,17 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.client.ClientSpellStateData;
-import net.electro.elementalist.item.bracelets.BraceletMaster;
+import net.electro.elementalist.item.bracelets.ChargedStaff;
 import net.electro.elementalist.networking.ModMessages;
 import net.electro.elementalist.networking.packet.SelectSpellC2SPacket;
 import net.electro.elementalist.spells.SpellsMaster;
-import net.electro.elementalist.util.SpellIdMap;
+import net.electro.elementalist.util.ElementalistMaps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
-import net.minecraftforge.client.event.ScreenEvent;
 
 import java.util.List;
 
@@ -59,7 +58,8 @@ public class SpellSelectWheelGui extends Screen {
         poseStack.popPose();
 
 
-        List<SpellsMaster> spellList = SpellIdMap.getSpellListOfElement(((BraceletMaster)mc.player.getMainHandItem().getItem()).ELEMENT);
+        List<SpellsMaster> spellList = ElementalistMaps.getUnlockedSpellListOfElement(((ChargedStaff)mc.player.getMainHandItem().getItem()).ELEMENT,
+                ClientSpellStateData.getUnlockedSpells());
 
         int segmentsAmount = spellList.size();
 
@@ -124,7 +124,7 @@ public class SpellSelectWheelGui extends Screen {
         poseStack.popPose();
 
         poseStack.pushPose();
-        Component spellName = Component.translatable("elementalist.spell_names." + spell.spellString);
+        Component spellName = Component.translatable("elementalist.spell_name." + spell.spellString);
         int spellNameTextWidth = mc.font.width(spellName);
         mc.font.drawShadow(poseStack, spellName, x + 16 - (spellNameTextWidth / 2), y - mc.font.lineHeight - 2, 0xFFFFFFFF);
         mc.font.drawShadow(poseStack, Integer.toString(spell.manaCost), x + 12, y + 34, 0xFFFFFFFF);

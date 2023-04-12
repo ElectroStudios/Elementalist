@@ -1,7 +1,7 @@
 package net.electro.elementalist.networking.packet;
 
 import net.electro.elementalist.entities.spells.ShieldSpellEntity;
-import net.electro.elementalist.item.bracelets.BraceletMaster;
+import net.electro.elementalist.item.bracelets.ChargedStaff;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,7 +25,7 @@ public class ActivateShieldC2SPacket {
             ServerPlayer player = context.getSender();
             ServerLevel level = player.getLevel();
             ItemStack heldItem = player.getMainHandItem();
-            if (heldItem.getItem() instanceof BraceletMaster bracelet) {
+            if (heldItem.getItem() instanceof ChargedStaff bracelet) {
                 ShieldSpellEntity entity = new ShieldSpellEntity(player);
                 level.addFreshEntity(entity);
             }

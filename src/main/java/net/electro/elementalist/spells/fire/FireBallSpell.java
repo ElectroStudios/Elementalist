@@ -6,6 +6,7 @@ import net.electro.elementalist.spells.SpellsMaster;
 import net.electro.elementalist.util.DamageType;
 import net.electro.elementalist.util.Element;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class FireBallSpell extends SpellsMaster {
         children = List.of(1);
     }
     @Override
-    protected void initialize_spell(Player player) {
+    protected void initialize_spell(LivingEntity player) {
         FireballBasic fireball = new FireballBasic(player, damageType);
         player.level.addFreshEntity(fireball);
     }

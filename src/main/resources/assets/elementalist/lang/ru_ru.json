@@ -1,0 +1,44 @@
+{
+  "elementalist.spell_name.fireball":  "Fireball",
+  "elementalist.spell_name.fire_pulse":  "Fire pulse",
+  "elementalist.spell_name.fire_breath":  "Fire breath",
+  "elementalist.spell_name.fire_explosion":  "Fire explosion",
+  "elementalist.spell_name.fire_wave":  "Fire wave",
+  "elementalist.spell_name.fire_cluster_explosion":  "Cluster explosion",
+  
+  "elementalist.spell_name.water_slash":  "Water slash",
+  "elementalist.spell_name.water_stream":  "Water stream",
+
+  "elementalist.spell_name.ice_spear":  "Ice spear",
+
+
+  "elementalist.element_name.fire": "Огонь",
+  "elementalist.element_name.water": "Water",
+  "elementalist.element_name.ice": "Ice",
+  "elementalist.element_name.air": "Air",
+  "elementalist.element_name.lightning": "Lightning",
+  "elementalist.element_name.earth": "Earth",
+  "elementalist.element_name.life": "Life",
+  "elementalist.element_name.death": "Death",
+
+
+  "elementalist.element_description.fire": "Магия средней дальности. Поджигает врагов. Комбинируется с жизнью и землёй.",
+
+
+  "item.elementalist.fire_bracelet_iron": "Fire iron bracelet",
+  "item.elementalist.water_bracelet_iron": "Water iron bracelet",
+  "item.elementalist.ice_bracelet_iron": "Ice iron bracelet",
+  "item.elementalist.elementalist_grimoire": "Elementalist Grimoire",
+  "item.elementalist.uncharged_staff": "Uncharged staff",
+
+
+  "itemGroup.elementalist": "Elementalist",
+
+
+  "block.elementalist.altar": "Altar",
+
+
+  "key.category.elementalist.elementalist": "Elementalist",
+  "key.elementalist.select_spell": "Select Spell",
+  "key.elementalist.alternate_spells": "Alternate Spells"
+}
