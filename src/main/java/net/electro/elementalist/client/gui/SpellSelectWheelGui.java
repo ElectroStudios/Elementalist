@@ -1,27 +1,27 @@
 package net.electro.elementalist.client.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.client.ClientSpellStateData;
 import net.electro.elementalist.item.bracelets.ChargedStaff;
 import net.electro.elementalist.networking.ModMessages;
 import net.electro.elementalist.networking.packet.SelectSpellC2SPacket;
-import net.electro.elementalist.spells.SpellsMaster;
+import net.electro.elementalist.spells.SpellMaster;
 import net.electro.elementalist.util.ElementalistMaps;
+import net.electro.elementalist.util.Utility;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
 
+import java.awt.*;
 import java.util.List;
 
 public class SpellSelectWheelGui extends Screen {
     private final Minecraft mc = Minecraft.getInstance();
-    private SpellsMaster hoveredSpell;
+    private SpellMaster hoveredSpell;
     ResourceLocation spellSelectWheelTexture = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/spell_select_wheel.png");
     ResourceLocation activeSpellFrameTexture = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/active_spell_frame.png");
     ResourceLocation inactiveSpellFrameTexture = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/inactive_spell_frame.png");
@@ -43,8 +43,8 @@ public class SpellSelectWheelGui extends Screen {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
-
+    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        PoseStack poseStack = pGuiGraphics.pose();
         int guiHeight = mc.getWindow().getGuiScaledHeight();
         int guiWidth = mc.getWindow().getGuiScaledWidth();
 
@@ -53,23 +53,23 @@ public class SpellSelectWheelGui extends Screen {
 
 
         poseStack.pushPose();
-        performBlit(spellSelectWheelTexture, poseStack, (int)anchorPointX - 100, (int)anchorPointY - 100,
-                0, 0, 200, 200, 200, 200);
+        Utility.performBlit(pGuiGraphics, spellSelectWheelTexture, (int)anchorPointX - 100, (int)anchorPointY - 100,
+                0, 0, 200, 200, 200, 200, new Color(255, 255, 255, 255));
         poseStack.popPose();
 
 
-        List<SpellsMaster> spellList = ElementalistMaps.getUnlockedSpellListOfElement(((ChargedStaff)mc.player.getMainHandItem().getItem()).ELEMENT,
+        List<SpellMaster> spellList = ElementalistMaps.getUnlockedSpellListOfElement(((ChargedStaff)mc.player.getMainHandItem().getItem()).ELEMENT,
                 ClientSpellStateData.getUnlockedSpells());
 
         int segmentsAmount = spellList.size();
 
-        int hoveredSegment = getHoveredSegment(mouseX, mouseY, anchorPointX, anchorPointY, segmentsAmount);
+        int hoveredSegment = getHoveredSegment(pMouseX, pMouseY, anchorPointX, anchorPointY, segmentsAmount);
         this.hoveredSpell = spellList.get(hoveredSegment);
 
         for (int i = 0; i < segmentsAmount; i++) {
-            renderSegment(poseStack, spellList.get(i), segmentsAmount, i, (int)anchorPointX, (int)anchorPointY, i == hoveredSegment);
+            renderSegment(pGuiGraphics, spellList.get(i), segmentsAmount, i, (int)anchorPointX, (int)anchorPointY, i == hoveredSegment);
         }
-        super.render(poseStack, mouseX,  mouseY, partialTick);
+        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
     }
 
     @Override
@@ -94,7 +94,8 @@ public class SpellSelectWheelGui extends Screen {
         return super.mouseClicked(pMouseX, pMouseY, pButton);
     }
 
-    private void drawSpellFrame(PoseStack poseStack, int x, int y, SpellsMaster spell, boolean isHovered) {
+    private void drawSpellFrame(GuiGraphics guiGraphics, int x, int y, SpellMaster spell, boolean isHovered) {
+        PoseStack poseStack = guiGraphics.pose();
         int spellId = spell.spellId;
         int currentCooldown = ClientSpellStateData.getCooldown(spellId);
 
@@ -103,54 +104,48 @@ public class SpellSelectWheelGui extends Screen {
 
         poseStack.pushPose();
         if (isHovered) {
-            performBlit(highlightTexture, poseStack, x - 13, y - 13, 0, 0, 64, 64, 64, 64);
+            Utility.performBlit(guiGraphics, highlightTexture, x - 13, y - 13, 0, 0, 64,
+                    64, 64, 64, new Color(255, 255, 255, 255));
         }
 
         if (currentCooldown > 0) {
-            performBlit(inactiveSpellFrameTexture, poseStack, x, y, 0, 0, 32, 32, 32, 32);
+            Utility.performBlit(guiGraphics, inactiveSpellFrameTexture, x, y, 0, 0, 32, 32,
+                    32, 32, new Color(255, 255, 255, 255));
         }
         else {
-            performBlit(activeSpellFrameTexture, poseStack, x, y, 0, 0, 32, 32, 32, 32);
+            Utility.performBlit(guiGraphics, activeSpellFrameTexture, x, y, 0, 0, 32, 32,
+                    32, 32, new Color(255, 255, 255, 255));
         }
 
-        performBlit(spellIcon, poseStack, x, y, 0, 0, 32, 32, 32, 32);
+        Utility.performBlit(guiGraphics, spellIcon, x, y, 0, 0, 32, 32, 32,
+                32, new Color(255, 255, 255, 255));
 
         int cooldownOffset = (int)(32 * (currentCooldown / (float)maxCooldown));
 
-        performBlit(manaTexture, poseStack, x + 2, y + 34, 0, 0, 8, 8, 8, 8);
+        Utility.performBlit(guiGraphics, manaTexture, x + 2, y + 34, 0, 0, 8, 8,
+                8, 8, new Color(255, 255, 255, 255));
 
-        performBlit(spellCooldownCoverTexture, poseStack, x, y + 32 - cooldownOffset, 0, 32 - cooldownOffset, 32, cooldownOffset, 32, 32);
+        Utility.performBlit(guiGraphics, spellCooldownCoverTexture, x, y + 32 - cooldownOffset, 0,
+                32 - cooldownOffset, 32, cooldownOffset, 32, 32, new Color(255, 255, 255, 255));
 
         poseStack.popPose();
 
         poseStack.pushPose();
-        Component spellName = Component.translatable("elementalist.spell_name." + spell.spellString);
+        Component spellName = Component.translatable("elementalist.spell_name." + spell.spellName);
         int spellNameTextWidth = mc.font.width(spellName);
-        mc.font.drawShadow(poseStack, spellName, x + 16 - (spellNameTextWidth / 2), y - mc.font.lineHeight - 2, 0xFFFFFFFF);
-        mc.font.drawShadow(poseStack, Integer.toString(spell.manaCost), x + 12, y + 34, 0xFFFFFFFF);
+        
+        guiGraphics.drawString(this.font, spellName, x + 16 - (spellNameTextWidth / 2), y - mc.font.lineHeight - 2, 0xFFFFFFFF, true);
+        guiGraphics.drawString(this.font, Integer.toString(spell.manaCost), x + 12, y + 34, 0xFFFFFFFF, true);
         poseStack.popPose();
     }
 
-    private void renderSegment(PoseStack poseStack, SpellsMaster spell, int segmentsAmount,
+    private void renderSegment(GuiGraphics guiGraphics, SpellMaster spell, int segmentsAmount,
                                int segmentIndex, int xAnchor, int yAnchor, boolean isHovered) {
         double segmentAngle = Math.toRadians(360 / (float)segmentsAmount * segmentIndex + (180 / (float)segmentsAmount));
         int x = xAnchor + (int)(-Math.sin(segmentAngle) * 80) - 16;
         int y = yAnchor + (int)(Math.cos(segmentAngle) * 80) - 16;
 
-        drawSpellFrame(poseStack, x, y, spell, isHovered);
-    }
-
-    private void performBlit(ResourceLocation texture, PoseStack pPoseStack, int pX, int pY,
-                             float pUOffset, float pVOffset, int pWidth, int pHeight,
-                             int pTextureWidth, int pTextureHeight) {
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        RenderSystem.setShaderTexture(0, texture);
-        blit(pPoseStack, pX, pY, pUOffset, pVOffset, pWidth, pHeight, pTextureWidth, pTextureHeight);
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.disableBlend();
+        drawSpellFrame(guiGraphics, x, y, spell, isHovered);
     }
 
     private int getHoveredSegment(int mouseX, int mouseY, float anchorPointX, float anchorPointY, int segmentsAmount) {

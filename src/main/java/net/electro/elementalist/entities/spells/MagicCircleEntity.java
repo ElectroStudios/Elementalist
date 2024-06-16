@@ -3,6 +3,7 @@ package net.electro.elementalist.entities.spells;
 import net.electro.elementalist.entities.ModEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -11,18 +12,16 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class MagicCircleEntity extends Entity implements IAnimatable {
+
+public class MagicCircleEntity extends Entity implements GeoEntity {
     protected int duration;
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private final boolean CLOCKWISE;
     private static final EntityDataAccessor<Integer> DATA_COLOR = SynchedEntityData.defineId(MagicCircleEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> DATA_ANIMATION_SPEED = SynchedEntityData.defineId(MagicCircleEntity.class, EntityDataSerializers.FLOAT);
@@ -46,7 +45,7 @@ public class MagicCircleEntity extends Entity implements IAnimatable {
     }
 
     public void setColor(int color) {
-        if (!this.level.isClientSide) {
+        if (!this.level().isClientSide) {
             this.getEntityData().set(DATA_COLOR, color);
         }
     }
@@ -56,7 +55,7 @@ public class MagicCircleEntity extends Entity implements IAnimatable {
     }
 
     public void setAnimationSpeed(float animationSpeed) {
-        if (!this.level.isClientSide) {
+        if (!this.level().isClientSide) {
             this.getEntityData().set(DATA_ANIMATION_SPEED, animationSpeed);
         }
     }
@@ -79,7 +78,7 @@ public class MagicCircleEntity extends Entity implements IAnimatable {
     @Override
     public void tick() {
         super.tick();
-        if (!level.isClientSide()) {
+        if (!level().isClientSide()) {
             if (duration <= 0) {
                 this.discard();
             }
@@ -98,11 +97,11 @@ public class MagicCircleEntity extends Entity implements IAnimatable {
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return new ClientboundAddEntityPacket(this);
     }
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+    private PlayState predicate(AnimationState event) {
         String animationName;
         if (CLOCKWISE) {
             animationName = "animation.magic_circle.clockwise";
@@ -110,19 +109,20 @@ public class MagicCircleEntity extends Entity implements IAnimatable {
         else {
             animationName = "animation.magic_circle.counterclockwise";
         }
-        event.getController().setAnimation(new AnimationBuilder().addAnimation(animationName));
+        event.getController().setAnimation(RawAnimation.begin().then(animationName, Animation.LoopType.LOOP));
         event.getController().setAnimationSpeed(getAnimationSpeed());
         return PlayState.CONTINUE;
     }
 
+
+
     @Override
-    public void registerControllers(AnimationData data) {
-        data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
     }
 
     @Override
-    public AnimationFactory getFactory() {
-        return factory;
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return null;
     }
-
 }

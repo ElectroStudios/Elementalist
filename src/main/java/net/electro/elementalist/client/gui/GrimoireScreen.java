@@ -5,12 +5,13 @@ import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.client.ClientSpellStateData;
 import net.electro.elementalist.networking.ModMessages;
 import net.electro.elementalist.networking.packet.UnlockSpellC2SPacket;
-import net.electro.elementalist.spells.SpellsMaster;
+import net.electro.elementalist.spells.SpellMaster;
+import net.electro.elementalist.spells.SpellRegistry;
 import net.electro.elementalist.util.Element;
 import net.electro.elementalist.util.ElementalistMaps;
 import net.electro.elementalist.util.Utility;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -26,9 +27,9 @@ public class GrimoireScreen extends Screen {
     private final ResourceLocation EXPERIENCE_BAR = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/grimoire/experience_bar.png");
     private final ResourceLocation UNLOCK_SPELL_BUTTON = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/grimoire/unlock_spell.png");
     private final ResourceLocation SPELL_UNLOCKED_BUTTON = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/grimoire/spell_unlocked.png");
-    private List<SpellsMaster> spellList;
+    private List<SpellMaster> spellList;
     private GrimoireSpellUnlockWidget root;
-    private GuiComponent hoveredWidget;
+    private HoverableWidget hoveredWidget;
     private GrimoireSpellUnlockWidget selectedWidget;
     private Element selectedElement = Element.FIRE;
     private List<Integer> levels;
@@ -76,6 +77,10 @@ public class GrimoireScreen extends Screen {
     public void selectElement(Element element) {
         selectedElement = element;
         spellList = ElementalistMaps.getSpellListOfElement(selectedElement);
+        List<SpellMaster> spellsOfElement = SpellRegistry.getAllSpellsOfElement(selectedElement);
+        if (spellsOfElement != null) {
+            mc.player.sendSystemMessage(Component.literal(spellsOfElement.toString()));
+        }
         calculateSpellsPerLevel();
         root = new GrimoireSpellUnlockWidget(spellList.get(0), 60, -65);
         selectedWidget = root;
@@ -84,6 +89,8 @@ public class GrimoireScreen extends Screen {
         skillDescriptionText.resetScale();
         elementNameText.resetScale();
         elementDescriptionText.resetScale();
+        elementSkillPointNumber.resetScale();
+        elementLevelNumber.resetScale();
     }
 
     private void tryUnlockSpell() {
@@ -98,7 +105,7 @@ public class GrimoireScreen extends Screen {
         addChildrenToLevels(spellList.get(0), 1);
     }
 
-    private void addChildrenToLevels(SpellsMaster spell, int level) {
+    private void addChildrenToLevels(SpellMaster spell, int level) {
         if (!spell.children.isEmpty()) {
             if (levels.size() <= level) {
                 levels.add(0);
@@ -130,7 +137,7 @@ public class GrimoireScreen extends Screen {
                 else {
                     xOffset = (int) ((i + currentLevelOffset.get(level)) * segmentSize);
                 }
-                SpellsMaster childSpell = ElementalistMaps.spellMap.get(widget.spell.children.get(i));
+                SpellMaster childSpell = ElementalistMaps.spellMap.get(widget.spell.children.get(i));
                 GrimoireSpellUnlockWidget childWidget = new GrimoireSpellUnlockWidget(childSpell, 18 + xOffset,
                         widget.Y_OFFSET + 20);
                 widget.addChild(childWidget);
@@ -159,7 +166,7 @@ public class GrimoireScreen extends Screen {
         int anchorPointX = guiWidth / 2;
         int anchorPointY = guiHeight / 2;
 
-        GuiComponent hoveredSpellUnlock = root.widgetHovered(pMouseX, pMouseY, anchorPointX, anchorPointY,
+        HoverableWidget hoveredSpellUnlock = root.widgetHovered(pMouseX, pMouseY, anchorPointX, anchorPointY,
                 ClientSpellStateData.getUnlockedSpells(), true);
         if (hoveredSpellUnlock != null) {
             hoveredWidget = hoveredSpellUnlock;
@@ -191,63 +198,63 @@ public class GrimoireScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
+    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        PoseStack poseStack = pGuiGraphics.pose();
         int guiHeight = mc.getWindow().getGuiScaledHeight();
         int guiWidth = mc.getWindow().getGuiScaledWidth();
 
         int anchorPointX = guiWidth / 2;
         int anchorPointY = guiHeight / 2;
 
-        Utility.performBlit(GRIMOIRE_BACKGROUND, pPoseStack, anchorPointX - 135, anchorPointY - 90, 0, 0,
+        Utility.performBlit(pGuiGraphics, GRIMOIRE_BACKGROUND, anchorPointX - 135, anchorPointY - 90, 0, 0,
                 270, 180, 270, 180, new Color(255, 255, 255 ,255));
 
 
-        root.draw(pPoseStack, anchorPointX, anchorPointY, ClientSpellStateData.getUnlockedSpells(), true);
+        root.draw(pGuiGraphics, anchorPointX, anchorPointY, ClientSpellStateData.getUnlockedSpells(), true);
 
-        elementNameText.render(pPoseStack, anchorPointX, anchorPointY, this.font,
+        elementNameText.render(pGuiGraphics, anchorPointX, anchorPointY, this.font,
                 Component.translatable("elementalist.element_name." + ElementalistMaps.elementToStringMap.get(selectedElement)));
-        elementDescriptionText.render(pPoseStack, anchorPointX, anchorPointY, this.font,
+        elementDescriptionText.render(pGuiGraphics, anchorPointX, anchorPointY, this.font,
                 Component.translatable("elementalist.element_description." + ElementalistMaps.elementToStringMap.get(selectedElement)));
 
-        skillNameText.render(pPoseStack, anchorPointX, anchorPointY, this.font,
-                Component.translatable("elementalist.spell_name." + selectedWidget.spell.spellString));
+        skillNameText.render(pGuiGraphics, anchorPointX, anchorPointY, this.font,
+                Component.translatable("elementalist.spell_name." + selectedWidget.spell.spellName));
 
-        skillDescriptionText.render(pPoseStack, anchorPointX, anchorPointY, this.font,
-                Component.translatable("elementalist.spell_description." + selectedWidget.spell.spellString));
+        skillDescriptionText.render(pGuiGraphics, anchorPointX, anchorPointY, this.font,
+                Component.translatable("elementalist.spell_description." + selectedWidget.spell.spellName));
 
-        elementLevelText.render(pPoseStack, anchorPointX, anchorPointY, this.font,
+        elementLevelText.render(pGuiGraphics, anchorPointX, anchorPointY, this.font,
                 Component.translatable("elementalist.level"));
 
-        elementLevelNumber.render(pPoseStack, anchorPointX, anchorPointY, this.font,
+        elementLevelNumber.render(pGuiGraphics, anchorPointX, anchorPointY, this.font,
                 Component.literal(Integer.toString(ClientSpellStateData.getElementLevel(ElementalistMaps.elementToIndexMap.get(selectedElement)))));
 
-        elementSkillPointNumber.render(pPoseStack, anchorPointX, anchorPointY, this.font,
+        elementSkillPointNumber.render(pGuiGraphics, anchorPointX, anchorPointY, this.font,
                 Component.literal(Integer.toString(ClientSpellStateData.getElementSkillPoints(ElementalistMaps.elementToIndexMap.get(selectedElement)))));
 
-        elementSkillPointText.render(pPoseStack, anchorPointX, anchorPointY, this.font,
+        elementSkillPointText.render(pGuiGraphics, anchorPointX, anchorPointY, this.font,
                 Component.translatable("elementalist.skill_points"));
 
-        unlockSpellButton.render(pPoseStack, anchorPointX, anchorPointY, this.font,
+        unlockSpellButton.render(pGuiGraphics, anchorPointX, anchorPointY, this.font,
                 Component.translatable((selectedWidget.isUnlocked ? "elementalist.unlocked_button" : "elementalist.unlock_button")),
                 (selectedWidget.isUnlocked ? SPELL_UNLOCKED_BUTTON : UNLOCK_SPELL_BUTTON), new Color(255, 255, 255, 255));
 
         for (ElementTabWidget elementTab : elementTabs) {
-            elementTab.renderTab(pPoseStack, anchorPointX, anchorPointY, elementTab.ELEMENT == selectedElement);
+            elementTab.renderTab(pGuiGraphics, anchorPointX, anchorPointY, elementTab.ELEMENT == selectedElement);
         }
 
-        Utility.performBlit(selectedWidget.spell.spellIcon, pPoseStack, anchorPointX - 36, anchorPointY + 23,
+        Utility.performBlit(pGuiGraphics, selectedWidget.spell.spellIcon, anchorPointX - 36, anchorPointY + 23,
                 0f, 0f, 30, 30, 30, 30, new Color(255, 255, 255, 255));
 
         int elementLevel = ClientSpellStateData.getElementLevel(ElementalistMaps.elementToIndexMap.get(selectedElement));
         int elementExperience = ClientSpellStateData.getElementExperience(ElementalistMaps.elementToIndexMap.get(selectedElement));
         float elementLevelProgress = (elementExperience - Utility.getExperienceToNextLevel(elementLevel - 1)) /
                 (float)(Utility.getExperienceToNextLevel(elementLevel) - Utility.getExperienceToNextLevel(elementLevel - 1));
-        Utility.performBlit(EXPERIENCE_BAR, pPoseStack, anchorPointX + 52, anchorPointY + 74, 0, 0,
+        Utility.performBlit(pGuiGraphics, EXPERIENCE_BAR, anchorPointX + 52, anchorPointY + 74, 0, 0,
                 (int)(66 * elementLevelProgress), 3, 66, 3,
                 ElementalistMaps.elementToColorMap.get(selectedElement));
 
 
-
-        super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
+        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
     }
 }

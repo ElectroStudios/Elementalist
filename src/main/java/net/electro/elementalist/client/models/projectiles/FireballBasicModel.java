@@ -6,7 +6,7 @@ package net.electro.elementalist.client.models.projectiles;// Made with Blockben
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.electro.elementalist.Elementalist;
-import net.electro.elementalist.entities.projectiles.FireballBasic;
+import net.electro.elementalist.entities.projectiles.FireballBasicProjectile;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -14,7 +14,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 
-public class FireballBasicModel extends EntityModel<FireballBasic> {
+public class FireballBasicModel extends EntityModel<FireballBasicProjectile> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(Elementalist.MOD_ID, "fireball_basic"), "main");
 	private final ModelPart bb_main;
@@ -33,7 +33,7 @@ public class FireballBasicModel extends EntityModel<FireballBasic> {
 	}
 
 	@Override
-	public void setupAnim(FireballBasic entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+	public void setupAnim(FireballBasicProjectile entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
 	}
 

@@ -3,9 +3,9 @@ package net.electro.elementalist.client.models.spellentities;
 import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.entities.spells.ShieldSpellEntity;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib.model.GeoModel;
 
-public class ShieldSpellModel extends AnimatedGeoModel<ShieldSpellEntity> {
+public class ShieldSpellModel extends GeoModel<ShieldSpellEntity> {
     @Override
     public ResourceLocation getModelResource(ShieldSpellEntity object) {
         return new ResourceLocation(Elementalist.MOD_ID, "geo/shield_spell.geo.json");

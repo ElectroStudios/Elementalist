@@ -4,9 +4,9 @@ import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.entities.spells.MagicCircleEntity;
 import net.electro.elementalist.entities.spells.ShieldSpellEntity;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib.model.GeoModel;
 
-public class MagicCircleModel extends AnimatedGeoModel<MagicCircleEntity> {
+public class MagicCircleModel extends GeoModel<MagicCircleEntity> {
     @Override
     public ResourceLocation getModelResource(MagicCircleEntity object) {
         return new ResourceLocation(Elementalist.MOD_ID, "geo/magic_circle.geo.json");

@@ -12,13 +12,13 @@ import net.electro.elementalist.client.models.spellentities.WaterStreamModel;
 import net.electro.elementalist.client.particle.ModParticles;
 import net.electro.elementalist.client.particle.fire.FireExplosionParticles;
 import net.electro.elementalist.client.particle.fire.FireFlashParticles;
+import net.electro.elementalist.client.renderer.mobs.BakenekoRenderer;
+import net.electro.elementalist.client.renderer.mobs.LesserDemonRenderer;
 import net.electro.elementalist.client.renderer.mobs.WaterSpiritRenderer;
+import net.electro.elementalist.client.renderer.projectiles.AirbladeRenderer;
 import net.electro.elementalist.client.renderer.projectiles.FireballBasicRenderer;
 import net.electro.elementalist.client.renderer.projectiles.IceSpearRenderer;
-import net.electro.elementalist.client.renderer.spellentities.MagicCircleRenderer;
-import net.electro.elementalist.client.renderer.spellentities.ShieldSpellRenderer;
-import net.electro.elementalist.client.renderer.spellentities.WaterSlashRenderer;
-import net.electro.elementalist.client.renderer.spellentities.WaterStreamRenderer;
+import net.electro.elementalist.client.renderer.spellentities.*;
 import net.electro.elementalist.entities.ModEntities;
 import net.electro.elementalist.entities.mobs.WaterSpiritEntity;
 import net.electro.elementalist.item.ElementalistGrimoire;
@@ -27,12 +27,14 @@ import net.electro.elementalist.networking.ModMessages;
 import net.electro.elementalist.networking.packet.ActivateShieldC2SPacket;
 import net.electro.elementalist.networking.packet.ActivateSpellC2SPacket;
 import net.electro.elementalist.client.KeyBinding;
+import net.electro.elementalist.networking.packet.MovementSkillInputC2SPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
@@ -41,19 +43,47 @@ public class ClientEvents {
     @Mod.EventBusSubscriber(modid= Elementalist.MOD_ID, value = Dist.CLIENT)
     public static class ClientForgeEvents {
         private static final Minecraft mc = Minecraft.getInstance();
-        private static final SpellStateGui spellStateGui = new SpellStateGui();
-
-        @SubscribeEvent
-        public static void renderHUD(final RenderGuiOverlayEvent.Post event) {
-            spellStateGui.drawHUD(event.getPoseStack());
 
 
-        }
         @SubscribeEvent
         public static void onKeyInput(InputEvent.Key event) {
 
             if (mc.player == null) {
                 return;
+            }
+
+            if (mc.screen == null) {
+                if (event.getAction() == 1) {
+                    if (event.getKey() == mc.options.keyLeft.getKey().getValue()) {
+                        if (ClientSpellStateData.isInDodgeLeftInterval()) {
+                            ClientSpellStateData.setDodgeLeftInterval(0);
+                            ModMessages.sendToServer(new MovementSkillInputC2SPacket("dodgeLeft"));
+                        } else {
+                            ClientSpellStateData.setDodgeLeftInterval(8);
+                        }
+                    } else if (event.getKey() == mc.options.keyRight.getKey().getValue()) {
+                        if (ClientSpellStateData.isInDodgeRightInterval()) {
+                            ClientSpellStateData.setDodgeRightInterval(0);
+                            ModMessages.sendToServer(new MovementSkillInputC2SPacket("dodgeRight"));
+                        } else {
+                            ClientSpellStateData.setDodgeRightInterval(8);
+                        }
+                    } else if (event.getKey() == mc.options.keyJump.getKey().getValue()) {
+                        if (!mc.player.onGround()) {
+                            ModMessages.sendToServer(new MovementSkillInputC2SPacket("jump"));
+                        }
+                    } else if (event.getKey() == mc.options.keyShift.getKey().getValue()) {
+                        ModMessages.sendToServer(new MovementSkillInputC2SPacket("activateFallProtection"));
+                    } else if (event.getKey() == mc.options.keySprint.getKey().getValue()) {
+                        ModMessages.sendToServer(new MovementSkillInputC2SPacket("activateMovementSlowdown"));
+                    }
+                } else if (event.getAction() == 0) {
+                    if (event.getKey() == mc.options.keyShift.getKey().getValue()) {
+                        ModMessages.sendToServer(new MovementSkillInputC2SPacket("deactivateFallProtection"));
+                    } else if (event.getKey() == mc.options.keySprint.getKey().getValue()) {
+                        ModMessages.sendToServer(new MovementSkillInputC2SPacket("deactivateMovementSlowdown"));
+                    }
+                }
             }
 
             if (event.getKey() == KeyBinding.ALTERNATE_SPELLS_KEY.getKey().getValue()) {
@@ -64,13 +94,11 @@ public class ClientEvents {
                         if (heldItem.getItem() instanceof ChargedStaff) {
                             ModMessages.sendToServer(new ActivateShieldC2SPacket());
                         }
-                    }
-                    else {
+                    } else {
                         ClientSpellStateData.setAltInterval(20);
                     }
                     ClientSpellStateData.setIsSpellAlternateActive(false);
-                }
-                else if (event.getAction() == 1) {
+                } else if (event.getAction() == 1) {
                     ClientSpellStateData.setIsSpellAlternateActive(true);
                 }
             }
@@ -81,8 +109,7 @@ public class ClientEvents {
                     if (event.getKey() == KeyBinding.SPELL_SELECT_KEY.getKey().getValue()) {
                         if (mc.screen instanceof SpellSelectWheelGui && event.getAction() == 0) {
                             mc.player.closeContainer();
-                        }
-                        else if (event.getAction() == 1) {
+                        } else if (event.getAction() == 1) {
                             mc.setScreen(new SpellSelectWheelGui());
                         }
                     }
@@ -139,12 +166,16 @@ public class ClientEvents {
 
     @Mod.EventBusSubscriber(modid = Elementalist.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientModBusEvents {
+
+        @SubscribeEvent
+        public static void onRegisterOverlays(RegisterGuiOverlaysEvent event) {
+            event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "spell_state", SpellStateGui.instance);
+        }
+
         @SubscribeEvent
         public static void registerParticleFactories(final RegisterParticleProvidersEvent event) {
-            event.register(ModParticles.FIRE_EXPLOSION_PARTICLES.get(),
-                    FireExplosionParticles.Provider::new);
-            event.register(ModParticles.FIRE_FLASH_PARTICLES.get(),
-                    FireFlashParticles.Provider::new);
+            event.registerSpriteSet(ModParticles.FIRE_EXPLOSION_PARTICLES.get(), FireExplosionParticles.Provider::new);
+            event.registerSpriteSet(ModParticles.FIRE_FLASH_PARTICLES.get(), FireFlashParticles.Provider::new);
         }
         @SubscribeEvent
         public static void onKeyRegister (RegisterKeyMappingsEvent event) {
@@ -161,12 +192,17 @@ public class ClientEvents {
             event.registerEntityRenderer(ModEntities.FIRE_WAVE.get(), NoopRenderer::new);
             event.registerEntityRenderer(ModEntities.FIRE_CLUSTER_EXPLOSION.get(), NoopRenderer::new);
             event.registerEntityRenderer(ModEntities.FIRE_CLUSTER_EXPLOSION_PART.get(), NoopRenderer::new);
+            event.registerEntityRenderer(ModEntities.ICICLE_BARRAGE.get(), NoopRenderer::new);
             event.registerEntityRenderer(ModEntities.WATER_SLASH.get(), WaterSlashRenderer::new);
             event.registerEntityRenderer(ModEntities.WATER_STREAM.get(), WaterStreamRenderer::new);
             event.registerEntityRenderer(ModEntities.ICE_SPEAR.get(), IceSpearRenderer::new);
+            event.registerEntityRenderer(ModEntities.THUNDERBOLT.get(), ThunderboltRenderer::new);
+            event.registerEntityRenderer(ModEntities.AIRBLADE.get(), AirbladeRenderer::new);
             event.registerEntityRenderer(ModEntities.SHIELD_SPELL.get(), ShieldSpellRenderer::new);
             event.registerEntityRenderer(ModEntities.MAGIC_CIRCLE.get(), MagicCircleRenderer::new);
             event.registerEntityRenderer(ModEntities.WATER_SPIRIT.get(), WaterSpiritRenderer::new);
+            event.registerEntityRenderer(ModEntities.LESSER_DEMON.get(), LesserDemonRenderer::new);
+            event.registerEntityRenderer(ModEntities.BAKENEKO.get(), BakenekoRenderer::new);
         }
 
         @SubscribeEvent

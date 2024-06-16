@@ -4,15 +4,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.client.models.projectiles.FireballBasicModel;
-import net.electro.elementalist.entities.ModEntities;
-import net.electro.elementalist.entities.projectiles.FireballBasic;
+import net.electro.elementalist.entities.projectiles.FireballBasicProjectile;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
-public class FireballBasicRenderer extends EntityRenderer<FireballBasic> {
+public class FireballBasicRenderer extends EntityRenderer<FireballBasicProjectile> {
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(Elementalist.MOD_ID, "textures/entities/fireball_basic.png");
     protected FireballBasicModel model;
     public FireballBasicRenderer(EntityRendererProvider.Context pContext) {
@@ -21,7 +20,7 @@ public class FireballBasicRenderer extends EntityRenderer<FireballBasic> {
     }
 
     @Override
-    public void render(FireballBasic pEntity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
+    public void render(FireballBasicProjectile pEntity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
         pPoseStack.pushPose();
         this.model.setupAnim(pEntity, pPartialTick, 0, 0, 0, 0);
         VertexConsumer vertexconsumer = pBuffer.getBuffer(this.model.renderType(TEXTURE_LOCATION));
@@ -31,7 +30,7 @@ public class FireballBasicRenderer extends EntityRenderer<FireballBasic> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(FireballBasic pEntity) {
+    public ResourceLocation getTextureLocation(FireballBasicProjectile pEntity) {
         return TEXTURE_LOCATION;
     }
 }

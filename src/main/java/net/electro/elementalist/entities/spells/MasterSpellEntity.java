@@ -1,17 +1,14 @@
 package net.electro.elementalist.entities.spells;
 
-import net.electro.elementalist.entities.ModEntities;
 import net.electro.elementalist.util.DamageType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class SpellMasterEntity extends Entity {
+public class MasterSpellEntity extends net.minecraft.world.entity.Entity {
     @Nullable
     public LivingEntity owner;
     @Nullable
@@ -27,12 +24,12 @@ public class SpellMasterEntity extends Entity {
     protected List<LivingEntity> ignoredEntities;
     protected DamageType damageType;
 
-    public SpellMasterEntity(EntityType<?> pEntityType, Level pLevel) {
+    public MasterSpellEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public SpellMasterEntity(EntityType<?> entityType, LivingEntity owner, DamageType damageType) {
-        super(entityType, owner.level);
+    public MasterSpellEntity(EntityType<?> entityType, LivingEntity owner, DamageType damageType) {
+        super(entityType, owner.level());
         setOwner(owner);
         setPos(owner.getEyePosition());
         setRot(owner.yHeadRot, owner.getXRot());
@@ -54,8 +51,8 @@ public class SpellMasterEntity extends Entity {
 
     @javax.annotation.Nullable
     public LivingEntity getOwner() {
-        if (this.owner == null && this.ownerUUID != null && this.level instanceof ServerLevel) {
-            Entity entity = ((ServerLevel)this.level).getEntity(this.ownerUUID);
+        if (this.owner == null && this.ownerUUID != null && this.level() instanceof ServerLevel) {
+            net.minecraft.world.entity.Entity entity = ((ServerLevel)this.level()).getEntity(this.ownerUUID);
             if (entity instanceof LivingEntity) {
                 this.owner = (LivingEntity)entity;
             }
@@ -76,7 +73,7 @@ public class SpellMasterEntity extends Entity {
 
             for(int i = 0; i < listtag.size(); ++i) {
                 UUID enitityUuid = listtag.getCompound(i).getUUID("UUID");
-                ignoredEntities.add((LivingEntity) ((ServerLevel)this.level).getEntity(enitityUuid));
+                ignoredEntities.add((LivingEntity) ((ServerLevel)this.level()).getEntity(enitityUuid));
             }
         }
     }
@@ -101,7 +98,7 @@ public class SpellMasterEntity extends Entity {
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return new ClientboundAddEntityPacket(this);
     }
 

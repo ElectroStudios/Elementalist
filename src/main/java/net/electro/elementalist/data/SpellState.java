@@ -6,6 +6,7 @@ import net.electro.elementalist.networking.packet.ManaSyncS2CPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.minecraftforge.fml.common.Mod;
 
@@ -18,6 +19,37 @@ public class SpellState {
     private int mana = 0;
     private Map<Integer, Integer> spellCooldowns = new HashMap<Integer, Integer>();
     private int MAX_MANA = 100;
+    private int jumpsLeft = 2;
+    private boolean fallProtection;
+    private Vec3 savedDeltaMovement;
+
+    public void setFallProtection (boolean value) {
+        this.fallProtection = value;
+    }
+
+    public boolean getFallProtection () {
+        return fallProtection;
+    }
+
+    public void setJumpsLeft (int value) {
+        this.jumpsLeft = value;
+    }
+
+    public boolean isJumpAvailable () {
+        return jumpsLeft > 0;
+    }
+
+    public void decrementJumpsAvailable () {
+        this.jumpsLeft = Math.max(jumpsLeft - 1, 0);
+    }
+
+    public void setSavedDeltaMovement (Vec3 value) {
+        this.savedDeltaMovement = value;
+    }
+
+    public Vec3 getSavedDeltaMovement () {
+        return savedDeltaMovement;
+    }
 
     public void addMana (int amount, Player player) {
         this.mana = Math.min(amount + mana, MAX_MANA);

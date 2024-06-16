@@ -4,24 +4,44 @@ import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.client.ClientSpellStateData;
 import net.electro.elementalist.data.ElementalistStatsProvider;
 import net.electro.elementalist.data.SpellStateProvider;
+import net.electro.elementalist.effect.ModEffects;
 import net.electro.elementalist.entities.ModEntities;
+import net.electro.elementalist.entities.mobs.BakenekoEntity;
+import net.electro.elementalist.entities.mobs.LesserDemonEntity;
 import net.electro.elementalist.entities.mobs.WaterSpiritEntity;
 import net.electro.elementalist.networking.ModMessages;
 import net.electro.elementalist.networking.packet.*;
-import net.electro.elementalist.util.Element;
-import net.electro.elementalist.util.ElementalistMaps;
+import net.electro.elementalist.util.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class ModEvents {
     @Mod.EventBusSubscriber(modid = Elementalist.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -29,11 +49,20 @@ public class ModEvents {
         @SubscribeEvent
         public static void entityAttributeEvent(EntityAttributeCreationEvent event) {
             event.put(ModEntities.WATER_SPIRIT.get(), WaterSpiritEntity.setAttributes());
+            event.put(ModEntities.LESSER_DEMON.get(), LesserDemonEntity.setAttributes());
+            event.put(ModEntities.BAKENEKO.get(), BakenekoEntity.setAttributes());
         }
     }
 
     @Mod.EventBusSubscriber(modid = Elementalist.MOD_ID)
     public static class ModForgeEvents {
+
+//        @SubscribeEvent
+//        private void enqueueIMC (final InterModEnqueueEvent event) {
+//            InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE,
+//                    () -> SlotTypePreset.BELT.getMessageBuilder().build());
+//        }
+
         @SubscribeEvent
         public static void onAttachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
             if(event.getObject() instanceof Player) {
@@ -78,8 +107,38 @@ public class ModEvents {
                             ClientSpellStateData.decreaseSpellCooldowns();
                         }
                         ClientSpellStateData.decrementAltInterval();
+                        ClientSpellStateData.decrementDodgeLeftInterval();
+                        ClientSpellStateData.decrementDodgeRightInterval();
                     }
                 }
+            }
+        }
+
+        @SubscribeEvent
+        public static void onJump(LivingEvent.LivingJumpEvent event) {
+            if (event.getEntity().hasEffect(ModEffects.FROZEN.get())) {
+                event.getEntity().setDeltaMovement(0, 0, 0);
+            }
+        }
+
+        @SubscribeEvent
+        public static void onFallDamage(LivingFallEvent event) {
+            if (event.getEntity() instanceof Player player) {
+                player.getCapability(SpellStateProvider.SPELL_STATE).ifPresent(spellState -> {
+                    if (spellState.getFallProtection()) {
+                        ((ServerLevel)player.level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.STONE.defaultBlockState()),
+                                player.position().x, player.position().y, player.position().z, (int)(event.getDistance()*5),
+                                event.getDistance()/20f, 0.2, event.getDistance()/20f, 0);
+//                        ParticleUtil.createParticleCircle(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.STONE.defaultBlockState()),
+//                                player.level, event.getDistance()/20f, player.position(), 0, 0, 0f);
+                        List<LivingEntity> ignoredEntities = List.of(player);
+                        DamageDealer damageDealer = new DamageDealer(player.position(), player, player, ignoredEntities,
+                                new DamageType(4f, Element.EARTH, 0, 1f));
+                        damageDealer.dealDamageSphere(event.getDistance() / 4, event.getDistance() / 4);
+                        event.setDistance(Math.max(0, event.getDistance() - 20));
+                    }
+                    spellState.setJumpsLeft(2);
+                });
             }
         }
 

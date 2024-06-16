@@ -50,6 +50,8 @@
   "item.elementalist.elementalist_grimoire": "Elementalist Grimoire",
   "item.elementalist.uncharged_staff": "Uncharged staff",
   "item.elementalist.water_spirit_spawn_egg": "Water Spirit Spawn Egg",
+  "item.elementalist.lesser_demon_spawn_egg": "Lesser Demon Spawn Egg",
+  "item.elementalist.bakeneko_spawn_egg": "Bakeneko Spawn Egg",
 
 
   "itemGroup.elementalist": "Elementalist",
@@ -60,5 +62,14 @@
 
   "key.category.elementalist.elementalist": "Elementalist",
   "key.elementalist.select_spell": "Select Spell",
-  "key.elementalist.alternate_spells": "Alternate Spells"
+  "key.elementalist.alternate_spells": "Alternate Spells",
+
+  "effect.elementalist.cold": "Cold",
+  "effect.elementalist.frozen": "Frozen",
+  "effect.elementalist.wet": "Wet",
+  "effect.elementalist.electrified": "Electrified",
+
+  "entity.elementalist.water_spirit": "Water Spirit",
+  "entity.elementalist.lesser_demon": "Lesser Demon",
+  "entity.elementalist.bakeneko": "Bakeneko"
 }

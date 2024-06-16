@@ -11,7 +11,7 @@ import java.util.List;
 
 @AutoRegisterCapability
 public class ElementalistStats {
-    private List<Integer> playerUnlockedSpells = Arrays.asList(0, 4, 6);
+    private List<Integer> playerUnlockedSpells = Arrays.asList(0, 4, 6, 9, 10);
     private int playerLevel = 0;
     private int playerExperience = 0;
 
@@ -21,7 +21,7 @@ public class ElementalistStats {
     private List<Integer> elementSkillPoints = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0);
 
 
-    public void unlockSpell (Integer spellID)
+    public void unlockSpell (int spellID)
     {
         this.playerUnlockedSpells.add(spellID);
     }

@@ -28,22 +28,13 @@ public class DamageDealer {
         this.OWNER = owner;
         this.SOURCE = source;
         this.POS = pos;
-        this.LEVEL = owner.level;
+        this.LEVEL = source.level();
         this.IGNORED_ENTITIES = ignoredEntities;
         this.DAMAGE_TYPE = damageType;
     }
 
-    public DamageDealer(Vec3 pos, LivingEntity owner, Entity source, DamageType damageType) {
-        this.OWNER = owner;
-        this.SOURCE = source;
-        this.POS = pos;
-        this.LEVEL = owner.level;
-        this.IGNORED_ENTITIES = new ArrayList<>();
-        this.DAMAGE_TYPE = damageType;
-    }
-
     public void damageEffects(LivingEntity entity, float effectAmount, Vec3 direction) {
-        entity.hurt(DamageSource.indirectMagic(this.SOURCE, this.OWNER), this.DAMAGE_TYPE.calculateDamage(this.OWNER, entity));
+        entity.hurt(OWNER.damageSources().indirectMagic(this.SOURCE, this.OWNER), this.DAMAGE_TYPE.calculateDamage(this.OWNER, entity));
         entity.knockback(effectAmount * this.DAMAGE_TYPE.KNOCKBACK, direction.x, direction.z);
     }
 
@@ -57,7 +48,7 @@ public class DamageDealer {
 
     public void setBlocksInRadius(int radius, float probability) {
         List<BlockPos> blocks = new ArrayList<>();
-        BlockPos blockPos = new BlockPos(this.POS);
+        BlockPos blockPos = new BlockPos((int)POS.x, (int)POS.y, (int)POS.z);
 
         for (int aX = -radius; aX <= radius; aX++) {
             for (int aY = -radius; aY <= radius; aY++) {
@@ -156,16 +147,16 @@ public class DamageDealer {
         }
     }
 
-    public void dealDamageRaytrace(Vec3 targetPos) {
-        EntityHitResult entityHitResult = ProjectileUtil.getEntityHitResult(this.OWNER, this.POS, targetPos,
-                new AABB(this.POS, targetPos).inflate(5f), (entity) -> {return !entity.isSpectator() &&
-                        entity.isPickable() && !IGNORED_ENTITIES.contains(entity) && entity instanceof LivingEntity;
-        }, this.POS.subtract(targetPos).length());
-        if (entityHitResult != null)
-        {
-            damageEffects((LivingEntity) entityHitResult.getEntity(), 1f, this.OWNER.getForward().yRot(90));
-        }
-    }
+//    public void dealDamageRaytrace(Vec3 targetPos) {
+//        EntityHitResult entityHitResult = ProjectileUtil.getEntityHitResult(this.OWNER, this.POS, targetPos,
+//                new AABB(this.POS, targetPos).inflate(5f), (entity) -> {return !entity.isSpectator() &&
+//                        entity.isPickable() && !IGNORED_ENTITIES.contains(entity) && entity instanceof LivingEntity;
+//        }, this.POS.subtract(targetPos).length());
+//        if (entityHitResult != null)
+//        {
+//            damageEffects((LivingEntity) entityHitResult.getEntity(), 1f, this.SOURCE.getForward().yRot(90));
+//        }
+//    }
 
     protected Vec3 getDirectionToEntity(Entity entity) {
         return POS.subtract(entity.position()).normalize();

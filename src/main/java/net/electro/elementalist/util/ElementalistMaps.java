@@ -1,8 +1,11 @@
 package net.electro.elementalist.util;
 
-import net.electro.elementalist.spells.SpellsMaster;
+import net.electro.elementalist.spells.SpellMaster;
+import net.electro.elementalist.spells.air.AirbladeSpell;
 import net.electro.elementalist.spells.fire.*;
 import net.electro.elementalist.spells.ice.IceSpearSpell;
+import net.electro.elementalist.spells.ice.IcicleBarrageSpell;
+import net.electro.elementalist.spells.lightning.ThunderboltSpell;
 import net.electro.elementalist.spells.water.WaterSlashSpell;
 import net.electro.elementalist.spells.water.WaterStreamSpell;
 
@@ -13,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ElementalistMaps {
-    public static Map<Integer, SpellsMaster> spellMap = new HashMap<Integer, SpellsMaster>() {{
+    public static Map<Integer, SpellMaster> spellMap = new HashMap<Integer, SpellMaster>() {{
         put(0, new FireBallSpell());
         put(1, new FirePulseSpell());
         put(2, new FireBreathSpell());
@@ -22,7 +25,10 @@ public class ElementalistMaps {
         put(5, new WaterStreamSpell());
         put(6, new IceSpearSpell());
         put(7, new FireWaveSpell());
-        put(8, new FireClusterExplosion());
+        put(8, new FireClusterExplosionSpell());
+        put(9, new ThunderboltSpell());
+        put(10, new AirbladeSpell());
+        put(11, new IcicleBarrageSpell());
     }};
 
     public static Map<Element, Integer> elementToIndexMap = new HashMap<Element, Integer>() {{
@@ -61,9 +67,9 @@ public class ElementalistMaps {
     }
     };
 
-    public static List<SpellsMaster> getSpellListOfElement(Element element) {
-        List<SpellsMaster> list = new ArrayList<>();
-        for (SpellsMaster spell : spellMap.values()) {
+    public static List<SpellMaster> getSpellListOfElement(Element element) {
+        List<SpellMaster> list = new ArrayList<>();
+        for (SpellMaster spell : spellMap.values()) {
             if (spell.damageType.ELEMENT == element) {
                 list.add(spell);
             }
@@ -71,9 +77,9 @@ public class ElementalistMaps {
         return list;
     }
 
-    public static List<SpellsMaster> getUnlockedSpellListOfElement(Element element, List<Integer> unlockedSpells) {
-        List<SpellsMaster> list = new ArrayList<>();
-        for (SpellsMaster spell : spellMap.values()) {
+    public static List<SpellMaster> getUnlockedSpellListOfElement(Element element, List<Integer> unlockedSpells) {
+        List<SpellMaster> list = new ArrayList<>();
+        for (SpellMaster spell : spellMap.values()) {
             if (spell.damageType.ELEMENT == element && unlockedSpells.contains(spell.spellId)) {
                 list.add(spell);
             }

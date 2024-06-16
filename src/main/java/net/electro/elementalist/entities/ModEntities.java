@@ -1,12 +1,17 @@
 package net.electro.elementalist.entities;
 
 import net.electro.elementalist.Elementalist;
+import net.electro.elementalist.entities.mobs.BakenekoEntity;
+import net.electro.elementalist.entities.mobs.LesserDemonEntity;
 import net.electro.elementalist.entities.mobs.WaterSpiritEntity;
-import net.electro.elementalist.entities.projectiles.FireballBasic;
-import net.electro.elementalist.entities.projectiles.IceSpear;
+import net.electro.elementalist.entities.projectiles.AirbladeProjectile;
+import net.electro.elementalist.entities.projectiles.FireballBasicProjectile;
+import net.electro.elementalist.entities.projectiles.IceSpearProjectile;
 import net.electro.elementalist.entities.spells.MagicCircleEntity;
 import net.electro.elementalist.entities.spells.ShieldSpellEntity;
 import net.electro.elementalist.entities.spells.fire.*;
+import net.electro.elementalist.entities.spells.ice.IcicleBarrageEntity;
+import net.electro.elementalist.entities.spells.lightning.ThunderboltEntity;
 import net.electro.elementalist.entities.spells.water.WaterSlashEntity;
 import net.electro.elementalist.entities.spells.water.WaterStreamEntity;
 import net.minecraft.resources.ResourceLocation;
@@ -19,8 +24,9 @@ import net.minecraftforge.registries.RegistryObject;
 public class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, Elementalist.MOD_ID);
 
-    public static final RegistryObject<EntityType<FireballBasic>> FIREBALL_BASIC = ENTITIES.register("fireball_basic",
-            () -> EntityType.Builder.<FireballBasic>of(FireballBasic::new, MobCategory.MISC)
+    // Fire spells
+    public static final RegistryObject<EntityType<FireballBasicProjectile>> FIREBALL_BASIC = ENTITIES.register("fireball_basic",
+            () -> EntityType.Builder.<FireballBasicProjectile>of(FireballBasicProjectile::new, MobCategory.MISC)
                     .sized(0.3125F, 0.3125F)
                     .build(new ResourceLocation(Elementalist.MOD_ID, "fireball_basic").toString()));
 
@@ -49,7 +55,8 @@ public class ModEntities {
             ENTITIES.register("fire_cluster_explosion_part",
             () -> EntityType.Builder.<FireClusterExplosionPartEntity>of(FireClusterExplosionPartEntity::new, MobCategory.MISC)
                     .build(new ResourceLocation(Elementalist.MOD_ID, "fire_cluster_explosion_part").toString()));
-    
+
+    // Water spells
     public static final RegistryObject<EntityType<WaterSlashEntity>> WATER_SLASH = ENTITIES.register("water_slash",
             () -> EntityType.Builder.<WaterSlashEntity>of(WaterSlashEntity::new, MobCategory.MISC)
                     .sized(8f, 0.6f)
@@ -59,12 +66,28 @@ public class ModEntities {
             () -> EntityType.Builder.<WaterStreamEntity>of(WaterStreamEntity::new, MobCategory.MISC)
                     .build(new ResourceLocation(Elementalist.MOD_ID, "water_stream").toString()));
 
-    public static final RegistryObject<EntityType<IceSpear>> ICE_SPEAR = ENTITIES.register("ice_spear",
-            () -> EntityType.Builder.<IceSpear>of(IceSpear::new, MobCategory.MISC)
+    // Ice spells
+    public static final RegistryObject<EntityType<IceSpearProjectile>> ICE_SPEAR = ENTITIES.register("ice_spear",
+            () -> EntityType.Builder.<IceSpearProjectile>of(IceSpearProjectile::new, MobCategory.MISC)
                     .sized(0.3125F, 0.3125F)
-                    .clientTrackingRange(4)
                     .build(new ResourceLocation(Elementalist.MOD_ID, "ice_spear").toString()));
 
+    public static final RegistryObject<EntityType<IcicleBarrageEntity>> ICICLE_BARRAGE = ENTITIES.register("icicle_barrage",
+            () -> EntityType.Builder.<IcicleBarrageEntity>of(IcicleBarrageEntity::new, MobCategory.MISC)
+                    .build(new ResourceLocation(Elementalist.MOD_ID, "icicle_barrage").toString()));
+
+    // Lightning spells
+    public static final RegistryObject<EntityType<ThunderboltEntity>> THUNDERBOLT = ENTITIES.register("thunderbolt",
+            () -> EntityType.Builder.<ThunderboltEntity>of(ThunderboltEntity::new, MobCategory.MISC)
+                    .build(new ResourceLocation(Elementalist.MOD_ID, "thunderbolt").toString()));
+
+    // Air spells
+    public static final RegistryObject<EntityType<AirbladeProjectile>> AIRBLADE = ENTITIES.register("airblade",
+            () -> EntityType.Builder.<AirbladeProjectile>of(AirbladeProjectile::new, MobCategory.MISC)
+                    .sized(1F, 0.1F)
+                    .build(new ResourceLocation(Elementalist.MOD_ID, "airblade").toString()));
+
+    // Misc
     public static final RegistryObject<EntityType<ShieldSpellEntity>> SHIELD_SPELL = ENTITIES.register("shield_spell",
             () -> EntityType.Builder.<ShieldSpellEntity>of(ShieldSpellEntity::new, MobCategory.MISC)
                     .sized(3f, 3f)
@@ -75,8 +98,19 @@ public class ModEntities {
                     .sized(0.1f, 0.1f)
                     .build(new ResourceLocation(Elementalist.MOD_ID, "magic_circle").toString()));
 
+    // Mobs
     public static final RegistryObject<EntityType<WaterSpiritEntity>> WATER_SPIRIT = ENTITIES.register("water_spirit",
             () -> EntityType.Builder.<WaterSpiritEntity>of(WaterSpiritEntity::new, MobCategory.MONSTER)
                     .sized(0.4f, 1.5f)
                     .build(new ResourceLocation(Elementalist.MOD_ID, "water_spirit").toString()));
+
+    public static final RegistryObject<EntityType<LesserDemonEntity>> LESSER_DEMON = ENTITIES.register("lesser_demon",
+            () -> EntityType.Builder.<LesserDemonEntity>of(LesserDemonEntity::new, MobCategory.MONSTER)
+                    .sized(1f, 3f)
+                    .build(new ResourceLocation(Elementalist.MOD_ID, "lesser_demon").toString()));
+
+    public static final RegistryObject<EntityType<BakenekoEntity>> BAKENEKO = ENTITIES.register("bakeneko",
+            () -> EntityType.Builder.<BakenekoEntity>of(BakenekoEntity::new, MobCategory.MONSTER)
+                    .sized(2f, 1.5f)
+                    .build(new ResourceLocation(Elementalist.MOD_ID, "bakeneko").toString()));
 }

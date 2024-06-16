@@ -1,8 +1,6 @@
 package net.electro.elementalist.networking.packet;
 
-import net.electro.elementalist.client.ClientSpellStateData;
-import net.electro.elementalist.entities.spells.SpellMasterEntity;
-import net.minecraft.core.GlobalPos;
+import net.electro.elementalist.entities.spells.MasterSpellEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,7 +28,7 @@ public class SpellEntityClientSetupS2CPacket {
         NetworkEvent.Context context = supplier.get();
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
-            ((SpellMasterEntity)((ServerLevel)player.level).getEntity(entity)).clientEntitySetup();
+            ((MasterSpellEntity)((ServerLevel)player.level()).getEntity(entity)).clientEntitySetup();
         });
         return true;
     };

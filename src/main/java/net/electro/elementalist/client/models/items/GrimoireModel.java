@@ -3,9 +3,9 @@ package net.electro.elementalist.client.models.items;
 import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.item.ElementalistGrimoire;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib.model.GeoModel;
 
-public class GrimoireModel extends AnimatedGeoModel<ElementalistGrimoire> {
+public class GrimoireModel extends GeoModel<ElementalistGrimoire> {
 
     @Override
     public ResourceLocation getModelResource(ElementalistGrimoire object) {

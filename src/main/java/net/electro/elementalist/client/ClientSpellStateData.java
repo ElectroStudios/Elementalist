@@ -47,6 +47,8 @@ public class ClientSpellStateData {
 
     private static boolean isSpellAlternateActive;
     private static int altInterval;
+    private static int dodgeLeftInterval;
+    private static int dodgeRightInterval;
 
     public static void setUnlockedSpells(List<Integer> unlockedSpells) {
         ClientSpellStateData.unlockedSpells = unlockedSpells;
@@ -105,6 +107,32 @@ public class ClientSpellStateData {
         return elementSkillPoints.get(element);
     }
 
+    // Dodge left interval
+    public static void setDodgeLeftInterval(int amount) {
+        ClientSpellStateData.dodgeLeftInterval = amount;
+    }
+
+    public static boolean isInDodgeLeftInterval() {
+        return dodgeLeftInterval > 0;
+    }
+
+    public static void decrementDodgeLeftInterval() {
+        ClientSpellStateData.dodgeLeftInterval = Math.max(0, dodgeLeftInterval-1);
+    }
+    // Dodge right interval
+    public static void setDodgeRightInterval(int amount) {
+        ClientSpellStateData.dodgeRightInterval = amount;
+    }
+
+    public static boolean isInDodgeRightInterval() {
+        return dodgeRightInterval > 0;
+    }
+
+    public static void decrementDodgeRightInterval() {
+        ClientSpellStateData.dodgeRightInterval = Math.max(0, dodgeRightInterval-1);
+    }
+
+    // Alt Interval
     public static void setAltInterval(int amount) {
         ClientSpellStateData.altInterval = amount;
     }
@@ -114,8 +142,10 @@ public class ClientSpellStateData {
     }
 
     public static void decrementAltInterval() {
-        ClientSpellStateData.altInterval = Math.max(0, altInterval -1);
+        ClientSpellStateData.altInterval = Math.max(0, altInterval-1);
     }
+
+    // Spell cooldown
 
     public static void setSpellCooldown(int spellId, int amount) {
         spellCooldowns.put(spellId, amount);

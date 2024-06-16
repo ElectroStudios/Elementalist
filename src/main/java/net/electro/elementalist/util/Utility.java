@@ -3,6 +3,7 @@ package net.electro.elementalist.util;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -23,16 +24,15 @@ import java.util.function.Predicate;
 
 public class Utility {
 
-    public static void performBlit(ResourceLocation texture, PoseStack pPoseStack, int pX, int pY,
-                             float pUOffset, float pVOffset, int pWidth, int pHeight,
-                             int pTextureWidth, int pTextureHeight, Color color) {
+    public static void performBlit(GuiGraphics guiGraphics, ResourceLocation texture, int pX, int pY,
+                                   float pUOffset, float pVOffset, int pWidth, int pHeight,
+                                   int pTextureWidth, int pTextureHeight, Color color) {
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f,
                 color.getAlpha() / 255f);
-        RenderSystem.setShaderTexture(0, texture);
-        Screen.blit(pPoseStack, pX, pY, pUOffset, pVOffset, pWidth, pHeight, pTextureWidth, pTextureHeight);
+        guiGraphics.blit(texture, pX, pY, pUOffset, pVOffset, pWidth, pHeight, pTextureWidth, pTextureHeight);
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableBlend();
@@ -97,5 +97,13 @@ public class Utility {
 
     public static int getExperienceToNextLevel(int currentLevel) {
         return (int)(Math.pow(currentLevel+1, 1.5f) * 100);
+    }
+
+    public static Vec3 getRightVector(Entity entity) {
+        return entity.getForward().cross(new Vec3(0, 1, 0));
+    }
+
+    public static Vec3 getLeftVector(Entity entity) {
+        return getRightVector(entity).reverse();
     }
 }

@@ -54,6 +54,12 @@ public class ModMessages {
                 .consumerMainThread(ActivateShieldC2SPacket::handle)
                 .add();
 
+        net.messageBuilder(MovementSkillInputC2SPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(MovementSkillInputC2SPacket::new)
+                .encoder(MovementSkillInputC2SPacket::toBytes)
+                .consumerMainThread(MovementSkillInputC2SPacket::handle)
+                .add();
+
         net.messageBuilder(ManaSyncS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ManaSyncS2CPacket::new)
                 .encoder(ManaSyncS2CPacket::toBytes)
@@ -106,6 +112,12 @@ public class ModMessages {
                 .decoder(CooldownSyncS2CPacket::new)
                 .encoder(CooldownSyncS2CPacket::toBytes)
                 .consumerMainThread(CooldownSyncS2CPacket::handle)
+                .add();
+
+        net.messageBuilder(SyncEffectsS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(SyncEffectsS2CPacket::new)
+                .encoder(SyncEffectsS2CPacket::toBytes)
+                .consumerMainThread(SyncEffectsS2CPacket::handle)
                 .add();
     }
     public static <MSG> void sendToServer(MSG message) {

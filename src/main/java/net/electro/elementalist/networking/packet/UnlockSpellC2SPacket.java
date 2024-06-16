@@ -2,7 +2,7 @@ package net.electro.elementalist.networking.packet;
 
 import net.electro.elementalist.data.ElementalistStatsProvider;
 import net.electro.elementalist.networking.ModMessages;
-import net.electro.elementalist.spells.SpellsMaster;
+import net.electro.elementalist.spells.SpellMaster;
 import net.electro.elementalist.util.ElementalistMaps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -30,10 +30,10 @@ public class UnlockSpellC2SPacket {
         NetworkEvent.Context context = supplier.get();
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
-            ServerLevel level = player.getLevel();
+            ServerLevel level = player.serverLevel();
 
             player.getCapability(ElementalistStatsProvider.ELEMENTALIST_STATS).ifPresent(elementalistStats -> {
-                SpellsMaster spell = ElementalistMaps.spellMap.get(spellId);
+                SpellMaster spell = ElementalistMaps.spellMap.get(spellId);
                 if (!elementalistStats.getUnlockedSpellsList().contains(spellId) && spell.skillPointCost <=
                         elementalistStats.getElementSkillPoints(spell.damageType.ELEMENT)) {
                     elementalistStats.unlockSpell(spellId);

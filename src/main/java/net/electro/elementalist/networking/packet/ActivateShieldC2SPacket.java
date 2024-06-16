@@ -23,7 +23,7 @@ public class ActivateShieldC2SPacket {
         NetworkEvent.Context context = supplier.get();
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
-            ServerLevel level = player.getLevel();
+            ServerLevel level = player.serverLevel();
             ItemStack heldItem = player.getMainHandItem();
             if (heldItem.getItem() instanceof ChargedStaff bracelet) {
                 ShieldSpellEntity entity = new ShieldSpellEntity(player);

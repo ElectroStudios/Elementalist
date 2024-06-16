@@ -10,6 +10,7 @@ import net.electro.elementalist.util.ParticleUtil;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -21,28 +22,23 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.Animation;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
 import java.util.UUID;
 
-public class ShieldSpellEntity extends Entity implements IAnimatable, IExplosionEffects {
+public class ShieldSpellEntity extends Entity implements GeoEntity, IExplosionEffects {
     @Nullable
     public LivingEntity owner;
     @Nullable
     private UUID ownerUUID;
     private int duration = 100;
     private float shieldStrength = 11;
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public ShieldSpellEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -50,16 +46,16 @@ public class ShieldSpellEntity extends Entity implements IAnimatable, IExplosion
     }
 
     public ShieldSpellEntity(LivingEntity owner) {
-        super(ModEntities.SHIELD_SPELL.get(), owner.level);
+        super(ModEntities.SHIELD_SPELL.get(), owner.level());
         setOwner(owner);
         setPos(owner.getEyePosition().add(owner.getForward().multiply(2, 2, 2)).subtract(0, 1.5f, 0));
         setRot(owner.yHeadRot, owner.getXRot());
         this.noPhysics = true;
-        this.level.addFreshEntity(new MagicCircleEntity(this.position(), this.getYRot(), this.getXRot(), this.level,
+        this.level().addFreshEntity(new MagicCircleEntity(this.position(), this.getYRot(), this.getXRot(), this.level(),
                 100, 1f, true, 0xFFFFB1A8));
 
-        this.level.addFreshEntity(new MagicCircleEntity(this.position().add(this.getForward()), this.getYRot(),
-                this.getXRot(), this.level, 100, 1f, false, 0xFFFFB1A8));
+        this.level().addFreshEntity(new MagicCircleEntity(this.position().add(this.getForward()), this.getYRot(),
+                this.getXRot(), this.level(), 100, 1f, false, 0xFFFFB1A8));
     }
 
     @Override
@@ -70,17 +66,17 @@ public class ShieldSpellEntity extends Entity implements IAnimatable, IExplosion
     @Override
     public void tick() {
         super.tick();
-        if (this.level.isClientSide()) {
+        if (this.level().isClientSide()) {
             Vec3 particlePos = this.position().add(0, 1.5f, 0);
             if (duration == 90 || duration == 88) {
-                ParticleUtil.createParticleCircle(ParticleTypes.FLAME, this.level, 0.8f, particlePos, this.getYRot(), this.getXRot(), 2);
+                ParticleUtil.createParticleCircle(ParticleTypes.FLAME, this.level(), 0.8f, particlePos, this.getYRot(), this.getXRot(), 2);
             }
             else if (duration == 86) {
-                ParticleUtil.createParticleCircle(ParticleTypes.END_ROD, this.level, 0.8f, particlePos, this.getYRot(), this.getXRot(), 2);
+                ParticleUtil.createParticleCircle(ParticleTypes.END_ROD, this.level(), 0.8f, particlePos, this.getYRot(), this.getXRot(), 2);
             }
         }
         else {
-            List<Projectile> overlappingProjectiles = this.level.getEntitiesOfClass(Projectile.class, this.getBoundingBox(), (projectile -> {return true;}));
+            List<Projectile> overlappingProjectiles = this.level().getEntitiesOfClass(Projectile.class, this.getBoundingBox(), (projectile -> {return true;}));
             if (!overlappingProjectiles.isEmpty())
             {
                 for (Projectile projectile : overlappingProjectiles) {
@@ -96,7 +92,7 @@ public class ShieldSpellEntity extends Entity implements IAnimatable, IExplosion
 
     private void handleHitProjectile(Projectile projectile) {
         if (projectile instanceof MasterSpellProjectile masterSpellProjectile) {
-            if (!this.level.isClientSide()) {
+            if (!this.level().isClientSide()) {
                 if (!calculateWinningSide(masterSpellProjectile.damageType)) {
                     masterSpellProjectile.explode();
                 }
@@ -124,8 +120,8 @@ public class ShieldSpellEntity extends Entity implements IAnimatable, IExplosion
 
     @javax.annotation.Nullable
     public LivingEntity getOwner() {
-        if (this.owner == null && this.ownerUUID != null && this.level instanceof ServerLevel) {
-            Entity entity = ((ServerLevel)this.level).getEntity(this.ownerUUID);
+        if (this.owner == null && this.ownerUUID != null && this.level() instanceof ServerLevel) {
+            Entity entity = ((ServerLevel)this.level()).getEntity(this.ownerUUID);
             if (entity instanceof LivingEntity) {
                 this.owner = (LivingEntity)entity;
             }
@@ -149,30 +145,31 @@ public class ShieldSpellEntity extends Entity implements IAnimatable, IExplosion
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return new ClientboundAddEntityPacket(this);
     }
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.spell_shield.idle"));
+    private PlayState predicate(AnimationState event) {
+        event.getController().setAnimation(RawAnimation.begin().then("animation.spell_shield.idle", Animation.LoopType.LOOP));
         return PlayState.CONTINUE;
     }
 
-    @Override
-    public void registerControllers(AnimationData data) {
-        data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
-    }
-
-    @Override
-    public AnimationFactory getFactory() {
-        return factory;
-    }
 
     @Override
     public void explodeClient() {
-        ParticleUtil.createParticleCircle(ParticleTypes.END_ROD, this.level, 0.8f,
+        ParticleUtil.createParticleCircle(ParticleTypes.END_ROD, this.level(), 0.8f,
                 this.position().add(0, 1.5f, 0), this.getYRot(), this.getXRot(), 2);
-        this.level.playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ANVIL_DESTROY,
+        this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ANVIL_DESTROY,
                 SoundSource.NEUTRAL, 2f, 1f, false);
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
     }
 }

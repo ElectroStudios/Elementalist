@@ -2,19 +2,17 @@ package net.electro.elementalist.client.renderer.projectiles;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.electro.elementalist.Elementalist;
-import net.electro.elementalist.client.models.projectiles.FireballBasicModel;
 import net.electro.elementalist.client.models.projectiles.IceSpearModel;
-import net.electro.elementalist.entities.projectiles.FireballBasic;
-import net.electro.elementalist.entities.projectiles.IceSpear;
+import net.electro.elementalist.entities.projectiles.IceSpearProjectile;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
-public class IceSpearRenderer extends EntityRenderer<IceSpear> {
+public class IceSpearRenderer extends EntityRenderer<IceSpearProjectile> {
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(Elementalist.MOD_ID, "textures/entities/ice_spear.png");
     protected IceSpearModel model;
     public IceSpearRenderer(EntityRendererProvider.Context pContext) {
@@ -23,11 +21,11 @@ public class IceSpearRenderer extends EntityRenderer<IceSpear> {
     }
 
     @Override
-    public void render(IceSpear pEntity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
+    public void render(IceSpearProjectile pEntity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
         pPoseStack.pushPose();
         this.model.setupAnim(pEntity, pPartialTick, 0, 0, 0, 0);
-        pPoseStack.mulPose(Vector3f.YP.rotationDegrees(pEntity.getYRot() + 180));
-        pPoseStack.mulPose(Vector3f.XP.rotationDegrees(pEntity.getXRot()));
+        pPoseStack.mulPose(Axis.YP.rotationDegrees(pEntity.getYRot() + 180));
+        pPoseStack.mulPose(Axis.XP.rotationDegrees(pEntity.getXRot()));
         VertexConsumer vertexconsumer = pBuffer.getBuffer(this.model.renderType(TEXTURE_LOCATION));
         this.model.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         pPoseStack.popPose();
@@ -35,7 +33,7 @@ public class IceSpearRenderer extends EntityRenderer<IceSpear> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(IceSpear pEntity) {
+    public ResourceLocation getTextureLocation(IceSpearProjectile pEntity) {
         return TEXTURE_LOCATION;
     }
 }

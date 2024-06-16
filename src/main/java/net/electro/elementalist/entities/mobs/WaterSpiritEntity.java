@@ -1,35 +1,35 @@
 package net.electro.elementalist.entities.mobs;
 
-import net.electro.elementalist.entities.mobs.goals.SpellCastAttackGoal;
+import net.electro.elementalist.entities.mobs.goals.SpellAttackOffensiveGoal;
+import net.electro.elementalist.entities.mobs.goals.SpellEvadeGoal;
+import net.electro.elementalist.spells.lightning.ThunderboltSpell;
 import net.electro.elementalist.spells.water.WaterSlashSpell;
 import net.electro.elementalist.spells.water.WaterStreamSpell;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.HashMap;
-import java.util.Map;
 
-public class WaterSpiritEntity extends ElementalistMob implements IAnimatable {
-    private AnimationFactory factory = GeckoLibUtil.createFactory(this);
+import java.util.List;
+
+public class WaterSpiritEntity extends ElementalistMob implements GeoEntity {
+    private AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public WaterSpiritEntity(EntityType<? extends Monster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         this.maxMana = 100;
+        this.availableSpells = List.of(new WaterSlashSpell(), new WaterStreamSpell(), new ThunderboltSpell());
     }
 
     public static AttributeSupplier setAttributes() {
@@ -41,26 +41,27 @@ public class WaterSpiritEntity extends ElementalistMob implements IAnimatable {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new SpellCastAttackGoal<>(this, 1f, 2f, new WaterSlashSpell()));
-        this.goalSelector.addGoal(2, new SpellCastAttackGoal<>(this, 1f,  10f, new WaterStreamSpell()));
-        this.goalSelector.addGoal(3, new RandomStrollGoal(this, 1f));
+        this.goalSelector.addGoal(1, new SpellEvadeGoal<>(this));
+        this.goalSelector.addGoal(2, new FloatGoal(this));
+        this.goalSelector.addGoal(3, new SpellAttackOffensiveGoal<>(this));
+        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 1f));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+    private PlayState predicate(AnimationState state) {
 
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.water_spirit.idle", ILoopType.EDefaultLoopTypes.LOOP));
+        state.getController().setAnimation(RawAnimation.begin().then("animation.water_spirit.idle", Animation.LoopType.LOOP));
         return PlayState.CONTINUE;
     }
 
+
     @Override
-    public void registerControllers(AnimationData data) {
-        data.addAnimationController(new AnimationController(this, "controller", 0,
-                this::predicate));
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
     }
 
     @Override
-    public AnimationFactory getFactory() {
-        return this.factory;
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
     }
 }

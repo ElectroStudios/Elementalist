@@ -1,10 +1,7 @@
 package net.electro.elementalist.client.renderer.spellentities;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.client.models.spellentities.ShieldSpellModel;
 import net.electro.elementalist.entities.spells.ShieldSpellEntity;
@@ -13,15 +10,10 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import software.bernie.geckolib3.core.util.Color;
-import software.bernie.geckolib3.renderers.geo.GeoProjectilesRenderer;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
-public class ShieldSpellRenderer extends GeoProjectilesRenderer<ShieldSpellEntity> {
+public class ShieldSpellRenderer extends GeoEntityRenderer<ShieldSpellEntity> {
 
     protected final int FRAME_AMOUNT = 15;
     protected final ResourceLocation[] TEXTURE_LOCATIONS = new ResourceLocation[FRAME_AMOUNT];
@@ -31,21 +23,25 @@ public class ShieldSpellRenderer extends GeoProjectilesRenderer<ShieldSpellEntit
         setupTextures();
     }
 
+//    @Override
+//    public Color getRenderColor(ShieldSpellEntity animatable, float partialTick, PoseStack poseStack, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, int packedLight) {
+//        return Color.ofRGBA(255, 224, 209, 255);
+//    }
+
+
     @Override
-    public Color getRenderColor(ShieldSpellEntity animatable, float partialTick, PoseStack poseStack, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, int packedLight) {
-        return Color.ofRGBA(255, 224, 209, 255);
+    public RenderType getRenderType(ShieldSpellEntity animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+        return RenderType.entityTranslucentEmissive(texture);
     }
 
     @Override
-    public RenderType getRenderType(ShieldSpellEntity animatable, float partialTick, PoseStack poseStack,
-                                    @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
-                                    int packedLight, ResourceLocation texture) {
-        poseStack.popPose();
+    public void render(ShieldSpellEntity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         poseStack.pushPose();
         poseStack.translate(0, 1.5f, 0);
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(-animatable.getYRot() + 180));
-        poseStack.mulPose(Vector3f.XP.rotationDegrees(-animatable.getXRot()));
-        return RenderType.entityTranslucent(texture);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-animatable.getYRot() + 180));
+        poseStack.mulPose(Axis.XP.rotationDegrees(-animatable.getXRot()));
+        poseStack.popPose();
+        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 
     @Override
