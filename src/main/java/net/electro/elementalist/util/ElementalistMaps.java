@@ -1,13 +1,13 @@
 package net.electro.elementalist.util;
 
-import net.electro.elementalist.spells.SpellMaster;
-import net.electro.elementalist.spells.air.AirbladeSpell;
-import net.electro.elementalist.spells.fire.*;
-import net.electro.elementalist.spells.ice.IceSpearSpell;
-import net.electro.elementalist.spells.ice.IcicleBarrageSpell;
-import net.electro.elementalist.spells.lightning.ThunderboltSpell;
-import net.electro.elementalist.spells.water.WaterSlashSpell;
-import net.electro.elementalist.spells.water.WaterStreamSpell;
+import net.electro.elementalist.spell.SpellBase;
+import net.electro.elementalist.spell.air.AirbladeSpell;
+import net.electro.elementalist.spell.fire.*;
+import net.electro.elementalist.spell.ice.IceSpearSpell;
+import net.electro.elementalist.spell.ice.IcicleBarrageSpell;
+import net.electro.elementalist.spell.lightning.ThunderboltSpell;
+import net.electro.elementalist.spell.water.WaterSlashSpell;
+import net.electro.elementalist.spell.water.WaterStreamSpell;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ElementalistMaps {
-    public static Map<Integer, SpellMaster> spellMap = new HashMap<Integer, SpellMaster>() {{
+    public static Map<Integer, SpellBase> spellMap = new HashMap<Integer, SpellBase>() {{
         put(0, new FireBallSpell());
         put(1, new FirePulseSpell());
         put(2, new FireBreathSpell());
@@ -67,9 +67,9 @@ public class ElementalistMaps {
     }
     };
 
-    public static List<SpellMaster> getSpellListOfElement(Element element) {
-        List<SpellMaster> list = new ArrayList<>();
-        for (SpellMaster spell : spellMap.values()) {
+    public static List<SpellBase> getSpellListOfElement(Element element) {
+        List<SpellBase> list = new ArrayList<>();
+        for (SpellBase spell : spellMap.values()) {
             if (spell.damageType.ELEMENT == element) {
                 list.add(spell);
             }
@@ -77,9 +77,9 @@ public class ElementalistMaps {
         return list;
     }
 
-    public static List<SpellMaster> getUnlockedSpellListOfElement(Element element, List<Integer> unlockedSpells) {
-        List<SpellMaster> list = new ArrayList<>();
-        for (SpellMaster spell : spellMap.values()) {
+    public static List<SpellBase> getUnlockedSpellListOfElement(Element element, List<Integer> unlockedSpells) {
+        List<SpellBase> list = new ArrayList<>();
+        for (SpellBase spell : spellMap.values()) {
             if (spell.damageType.ELEMENT == element && unlockedSpells.contains(spell.spellId)) {
                 list.add(spell);
             }

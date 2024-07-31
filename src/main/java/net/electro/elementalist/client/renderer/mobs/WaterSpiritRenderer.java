@@ -1,7 +1,7 @@
 package net.electro.elementalist.client.renderer.mobs;
 
-import net.electro.elementalist.client.models.mobs.WaterSpiritModel;
-import net.electro.elementalist.entities.mobs.WaterSpiritEntity;
+import net.electro.elementalist.client.model.mobs.WaterSpiritModel;
+import net.electro.elementalist.entity.mobs.WaterSpiritEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

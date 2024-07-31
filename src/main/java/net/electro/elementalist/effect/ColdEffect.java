@@ -9,7 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
 public class ColdEffect extends MobEffect {
-    protected ColdEffect(MobEffectCategory pCategory, int pColor) {
+    public ColdEffect(MobEffectCategory pCategory, int pColor) {
         super(pCategory, pColor);
     }
 

@@ -3,10 +3,10 @@ package net.electro.elementalist.client.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.client.ClientSpellStateData;
-import net.electro.elementalist.networking.ModMessages;
-import net.electro.elementalist.networking.packet.UnlockSpellC2SPacket;
-import net.electro.elementalist.spells.SpellMaster;
-import net.electro.elementalist.spells.SpellRegistry;
+import net.electro.elementalist.registry.MessageRegistry;
+import net.electro.elementalist.networking.UnlockSpellC2SPacket;
+import net.electro.elementalist.spell.SpellBase;
+import net.electro.elementalist.registry.SpellRegistry;
 import net.electro.elementalist.util.Element;
 import net.electro.elementalist.util.ElementalistMaps;
 import net.electro.elementalist.util.Utility;
@@ -27,7 +27,7 @@ public class GrimoireScreen extends Screen {
     private final ResourceLocation EXPERIENCE_BAR = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/grimoire/experience_bar.png");
     private final ResourceLocation UNLOCK_SPELL_BUTTON = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/grimoire/unlock_spell.png");
     private final ResourceLocation SPELL_UNLOCKED_BUTTON = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/grimoire/spell_unlocked.png");
-    private List<SpellMaster> spellList;
+    private List<SpellBase> spellList;
     private GrimoireSpellUnlockWidget root;
     private HoverableWidget hoveredWidget;
     private GrimoireSpellUnlockWidget selectedWidget;
@@ -76,11 +76,7 @@ public class GrimoireScreen extends Screen {
 
     public void selectElement(Element element) {
         selectedElement = element;
-        spellList = ElementalistMaps.getSpellListOfElement(selectedElement);
-        List<SpellMaster> spellsOfElement = SpellRegistry.getAllSpellsOfElement(selectedElement);
-        if (spellsOfElement != null) {
-            mc.player.sendSystemMessage(Component.literal(spellsOfElement.toString()));
-        }
+        spellList = SpellRegistry.getAllSpellsOfElement(selectedElement);
         calculateSpellsPerLevel();
         root = new GrimoireSpellUnlockWidget(spellList.get(0), 60, -65);
         selectedWidget = root;
@@ -94,7 +90,7 @@ public class GrimoireScreen extends Screen {
     }
 
     private void tryUnlockSpell() {
-        ModMessages.sendToServer(new UnlockSpellC2SPacket(selectedWidget.spell.spellId));
+        MessageRegistry.sendToServer(new UnlockSpellC2SPacket(selectedWidget.spell.spellId));
     }
 
     private void calculateSpellsPerLevel() {
@@ -105,15 +101,15 @@ public class GrimoireScreen extends Screen {
         addChildrenToLevels(spellList.get(0), 1);
     }
 
-    private void addChildrenToLevels(SpellMaster spell, int level) {
+    private void addChildrenToLevels(SpellBase spell, int level) {
         if (!spell.children.isEmpty()) {
             if (levels.size() <= level) {
                 levels.add(0);
                 currentLevelOffset.add(0);
             }
             levels.set(level, levels.get(level) + spell.children.size());
-            for (int child : spell.children) {
-                addChildrenToLevels(ElementalistMaps.spellMap.get(child), level+1);
+            for (ResourceLocation child : spell.children) {
+                addChildrenToLevels(SpellRegistry.getSpell(child), level+1);
             }
         }
 
@@ -137,7 +133,7 @@ public class GrimoireScreen extends Screen {
                 else {
                     xOffset = (int) ((i + currentLevelOffset.get(level)) * segmentSize);
                 }
-                SpellMaster childSpell = ElementalistMaps.spellMap.get(widget.spell.children.get(i));
+                SpellBase childSpell = SpellRegistry.getSpell(widget.spell.children.get(i));
                 GrimoireSpellUnlockWidget childWidget = new GrimoireSpellUnlockWidget(childSpell, 18 + xOffset,
                         widget.Y_OFFSET + 20);
                 widget.addChild(childWidget);
@@ -218,10 +214,10 @@ public class GrimoireScreen extends Screen {
                 Component.translatable("elementalist.element_description." + ElementalistMaps.elementToStringMap.get(selectedElement)));
 
         skillNameText.render(pGuiGraphics, anchorPointX, anchorPointY, this.font,
-                Component.translatable("elementalist.spell_name." + selectedWidget.spell.spellName));
+                Component.translatable("elementalist.spell_name." + selectedWidget.spell.getName()));
 
         skillDescriptionText.render(pGuiGraphics, anchorPointX, anchorPointY, this.font,
-                Component.translatable("elementalist.spell_description." + selectedWidget.spell.spellName));
+                Component.translatable("elementalist.spell_description." + selectedWidget.spell.getName()));
 
         elementLevelText.render(pGuiGraphics, anchorPointX, anchorPointY, this.font,
                 Component.translatable("elementalist.level"));

@@ -1,13 +1,9 @@
 package net.electro.elementalist.util;
 
-import net.electro.elementalist.entities.spells.ShieldSpellEntity;
+import net.electro.elementalist.entity.spells.ShieldSpellEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
@@ -15,7 +11,6 @@ import net.minecraft.world.phys.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class DamageDealer {
     protected final Vec3 POS;

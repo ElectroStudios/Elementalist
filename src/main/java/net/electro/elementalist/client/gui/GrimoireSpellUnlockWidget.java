@@ -1,7 +1,7 @@
 package net.electro.elementalist.client.gui;
 
 import net.electro.elementalist.Elementalist;
-import net.electro.elementalist.spells.SpellMaster;
+import net.electro.elementalist.spell.SpellBase;
 import net.electro.elementalist.util.Utility;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -16,19 +16,19 @@ public class GrimoireSpellUnlockWidget implements HoverableWidget {
     public final int Y_OFFSET;
     public final int SIZE_X = 16;
     public final int SIZE_Y = 16;
-    public final SpellMaster spell;
+    public final SpellBase spell;
     public boolean isHovered = false;
     public boolean isUnlocked = false;
     private List<GrimoireSpellUnlockWidget> children = new ArrayList<>();
     private final ResourceLocation frameIconUnlocked = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/active_spell_frame.png");
     private final ResourceLocation frameIconLocked = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/inactive_spell_frame.png");
 
-    public GrimoireSpellUnlockWidget (SpellMaster spell, int xOffset, int yOffset) {
+    public GrimoireSpellUnlockWidget (SpellBase spell, int xOffset, int yOffset) {
         this.X_OFFSET = xOffset;
         this.Y_OFFSET = yOffset;
         this.spell = spell;
     }
-    public void draw(GuiGraphics guiGraphics, int anchorX, int anchorY, List<Integer> unlockedSpells, boolean previousUnlocked) {
+    public void draw(GuiGraphics guiGraphics, int anchorX, int anchorY, List<ResourceLocation> unlockedSpells, boolean previousUnlocked) {
         boolean unlocked = unlockedSpells.contains(spell.spellId);
         isUnlocked = unlocked;
         int brightness = (int)((previousUnlocked ? (isHovered ? 1f : 0.8f) : 0f) * 255);
@@ -57,7 +57,7 @@ public class GrimoireSpellUnlockWidget implements HoverableWidget {
     }
 
     public GrimoireSpellUnlockWidget widgetHovered(double MouseX, double MouseY, int anchorX, int anchorY,
-                                                   List<Integer> unlockedSpells, boolean previousUnlocked) {
+                                                   List<ResourceLocation> unlockedSpells, boolean previousUnlocked) {
         boolean unlocked = unlockedSpells.contains(spell.spellId);
         if (this.X_OFFSET + anchorX <= MouseX && this.X_OFFSET + this.SIZE_X + anchorX >= MouseX
                 && anchorY + this.Y_OFFSET <= MouseY && anchorY + this.Y_OFFSET + this.SIZE_Y >= MouseY &&

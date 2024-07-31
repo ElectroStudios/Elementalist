@@ -1,11 +1,11 @@
 package net.electro.elementalist.util;
 
 import net.electro.elementalist.data.ElementalistStatsProvider;
-import net.electro.elementalist.networking.ModMessages;
-import net.electro.elementalist.networking.packet.ElementExperienceSyncS2CPacket;
-import net.electro.elementalist.networking.packet.ElementLevelSyncS2CPacket;
-import net.electro.elementalist.networking.packet.ElementSkillPointsSyncS2CPacket;
-import net.electro.elementalist.networking.packet.PlayerLevelSyncS2CPacket;
+import net.electro.elementalist.registry.MessageRegistry;
+import net.electro.elementalist.networking.ElementExperienceSyncS2CPacket;
+import net.electro.elementalist.networking.ElementLevelSyncS2CPacket;
+import net.electro.elementalist.networking.ElementSkillPointsSyncS2CPacket;
+import net.electro.elementalist.networking.PlayerLevelSyncS2CPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -29,19 +29,19 @@ public class DamageType {
         if (owner instanceof Player){
             owner.getCapability(ElementalistStatsProvider.ELEMENTALIST_STATS).ifPresent(elementalistStats -> {
                 elementalistStats.addExperience((int) BASE_DAMAGE * EXP_MULTIPLIER, ELEMENT);
-                ModMessages.sendToPlayer(new ElementExperienceSyncS2CPacket(elementalistStats.getElementExperience(ELEMENT),
+                MessageRegistry.sendToPlayer(new ElementExperienceSyncS2CPacket(elementalistStats.getElementExperience(ELEMENT),
                         ElementalistMaps.elementToIndexMap.get(ELEMENT)), (ServerPlayer) owner);
                 owner.sendSystemMessage(Component.literal("current exp: " + elementalistStats.getPlayerExperience()));
                 if (elementalistStats.getPlayerExperience() >= Utility.getExperienceToNextLevel(elementalistStats.getPlayerLevel())) {
                     elementalistStats.newLevel();
-                    ModMessages.sendToPlayer(new PlayerLevelSyncS2CPacket(elementalistStats.getPlayerLevel()), (ServerPlayer) owner);
+                    MessageRegistry.sendToPlayer(new PlayerLevelSyncS2CPacket(elementalistStats.getPlayerLevel()), (ServerPlayer) owner);
                     owner.sendSystemMessage(Component.literal("current level: " + elementalistStats.getPlayerLevel()));
                 }
                 if (elementalistStats.getElementExperience(ELEMENT) >= Utility.getExperienceToNextLevel(elementalistStats.getElementLevel(ELEMENT))) {
                     elementalistStats.newElementLevel(ELEMENT);
-                    ModMessages.sendToPlayer(new ElementLevelSyncS2CPacket(elementalistStats.getElementLevel(ELEMENT),
+                    MessageRegistry.sendToPlayer(new ElementLevelSyncS2CPacket(elementalistStats.getElementLevel(ELEMENT),
                             ElementalistMaps.elementToIndexMap.get(ELEMENT)), (ServerPlayer) owner);
-                    ModMessages.sendToPlayer(new ElementSkillPointsSyncS2CPacket(elementalistStats.getElementSkillPoints(ELEMENT),
+                    MessageRegistry.sendToPlayer(new ElementSkillPointsSyncS2CPacket(elementalistStats.getElementSkillPoints(ELEMENT),
                             ElementalistMaps.elementToIndexMap.get(ELEMENT)), (ServerPlayer) owner);
                 }
             });

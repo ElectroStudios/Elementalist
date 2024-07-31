@@ -4,7 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.client.ClientSpellStateData;
 import net.electro.elementalist.item.bracelets.ChargedStaff;
-import net.electro.elementalist.spells.SpellMaster;
+import net.electro.elementalist.registry.SpellRegistry;
+import net.electro.elementalist.spell.SpellBase;
 import net.electro.elementalist.util.ElementalistMaps;
 import net.electro.elementalist.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -34,9 +35,9 @@ public class SpellStateGui implements IGuiOverlay {
         PoseStack poseStack = guiGraphics.pose();
         ItemStack heldItem = mc.player.getMainHandItem();
         if (((ChargedStaff)heldItem.getItem()).hasNbtData(selectedSpellNumber, heldItem)) {
-            int spellId = ((ChargedStaff) heldItem.getItem()).getNbtData(selectedSpellNumber, heldItem);
+            ResourceLocation spellId = ((ChargedStaff) heldItem.getItem()).getNbtData(selectedSpellNumber, heldItem);
             int currentCooldown = ClientSpellStateData.getCooldown(spellId);
-            SpellMaster spell = ElementalistMaps.spellMap.get(spellId);
+            SpellBase spell = SpellRegistry.getSpell(spellId);
             ResourceLocation spellIcon = spell.spellIcon;
 
             poseStack.pushPose();

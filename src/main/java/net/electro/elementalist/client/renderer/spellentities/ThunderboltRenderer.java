@@ -2,8 +2,8 @@ package net.electro.elementalist.client.renderer.spellentities;
 
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
-import net.electro.elementalist.entities.spells.MasterSpellEntity;
-import net.electro.elementalist.entities.spells.lightning.ThunderboltEntity;
+import net.electro.elementalist.entity.spells.MasterSpellEntity;
+import net.electro.elementalist.entity.spells.lightning.ThunderboltEntity;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;

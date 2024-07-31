@@ -1,7 +1,7 @@
 package net.electro.elementalist.client.renderer.mobs;
 
-import net.electro.elementalist.client.models.mobs.LesserDemonModel;
-import net.electro.elementalist.entities.mobs.LesserDemonEntity;
+import net.electro.elementalist.client.model.mobs.LesserDemonModel;
+import net.electro.elementalist.entity.mobs.LesserDemonEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

@@ -1,5 +1,7 @@
 package net.electro.elementalist.client;
 
+import net.minecraft.resources.ResourceLocation;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,8 +9,9 @@ import java.util.Map;
 
 public class ClientSpellStateData {
     private static int mana;
-    private static List<Integer> unlockedSpells = new ArrayList<>();
-    private static Map<Integer, Integer> spellCooldowns = new HashMap<Integer, Integer>();
+    private static List<ResourceLocation> unlockedSpells = new ArrayList<>();
+    private static Map<ResourceLocation, Integer> spellCooldowns = new HashMap<ResourceLocation, Integer>();
+    private static boolean combatMode = false;
 
     private static int playerLevel = 0;
 
@@ -50,11 +53,11 @@ public class ClientSpellStateData {
     private static int dodgeLeftInterval;
     private static int dodgeRightInterval;
 
-    public static void setUnlockedSpells(List<Integer> unlockedSpells) {
+    public static void setUnlockedSpells(List<ResourceLocation> unlockedSpells) {
         ClientSpellStateData.unlockedSpells = unlockedSpells;
     }
 
-    public static List<Integer> getUnlockedSpells() {
+    public static List<ResourceLocation> getUnlockedSpells() {
         return unlockedSpells;
     }
 
@@ -73,6 +76,14 @@ public class ClientSpellStateData {
 
     public static int getMana() {
         return mana;
+    }
+
+    public static void toggleCombatMode() {
+        combatMode = !combatMode;
+    }
+
+    public static boolean getCombatMode() {
+        return combatMode;
     }
 
     public static void setPlayerLevel(int level) {
@@ -147,7 +158,7 @@ public class ClientSpellStateData {
 
     // Spell cooldown
 
-    public static void setSpellCooldown(int spellId, int amount) {
+    public static void setSpellCooldown(ResourceLocation spellId, int amount) {
         spellCooldowns.put(spellId, amount);
     }
 
@@ -155,7 +166,7 @@ public class ClientSpellStateData {
         spellCooldowns.replaceAll((k, v) -> Math.max(v - 5, 0));
     }
 
-    public static int getCooldown(int spellId) {
+    public static int getCooldown(ResourceLocation spellId) {
         return (spellCooldowns.get(spellId) == null ? 0 : spellCooldowns.get(spellId));
     }
 }

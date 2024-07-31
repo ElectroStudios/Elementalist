@@ -11,7 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
 public class ElectrifiedEffect extends MobEffect {
-    protected ElectrifiedEffect(MobEffectCategory pCategory, int pColor) {
+    public ElectrifiedEffect(MobEffectCategory pCategory, int pColor) {
         super(pCategory, pColor);
     }
 

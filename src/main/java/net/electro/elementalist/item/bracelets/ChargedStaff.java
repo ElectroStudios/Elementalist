@@ -3,11 +3,14 @@ package net.electro.elementalist.item.bracelets;
 import net.electro.elementalist.util.Element;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.ResourceBundle;
 
 public class ChargedStaff extends Item {
     public final Element ELEMENT;
@@ -21,7 +24,7 @@ public class ChargedStaff extends Item {
         this.ELEMENT = element;
     }
 
-    public void addNbtData(int spellSlotId, int spellId, ItemStack itemStack) {
+    public void addNbtData(int spellSlotId, ResourceLocation spellId, ItemStack itemStack) {
         CompoundTag nbtData;
         if (itemStack.hasTag()) {
             nbtData = itemStack.getTag();
@@ -30,12 +33,12 @@ public class ChargedStaff extends Item {
         {
             nbtData = new CompoundTag();
         }
-        nbtData.putInt("elementalist.spell_slot_" + spellSlotId, spellId);
+        nbtData.putString("elementalist.spell_slot_" + spellSlotId, spellId.toString());
         itemStack.setTag(nbtData);
     }
 
-    public int getNbtData(int spellSlotId, ItemStack itemStack) {
-        return itemStack.getTag().getInt("elementalist.spell_slot_" + spellSlotId);
+    public ResourceLocation getNbtData(int spellSlotId, ItemStack itemStack) {
+        return new ResourceLocation(itemStack.getTag().getString("elementalist.spell_slot_" + spellSlotId));
     }
 
     public boolean hasNbtData(int spellSlotId, ItemStack itemStack) {

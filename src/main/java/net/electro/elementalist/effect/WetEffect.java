@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
 public class WetEffect extends MobEffect {
-    protected WetEffect(MobEffectCategory pCategory, int pColor) {
+    public WetEffect(MobEffectCategory pCategory, int pColor) {
         super(pCategory, pColor);
     }
 

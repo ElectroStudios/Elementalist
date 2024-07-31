@@ -4,9 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.client.ClientSpellStateData;
 import net.electro.elementalist.item.bracelets.ChargedStaff;
-import net.electro.elementalist.networking.ModMessages;
-import net.electro.elementalist.networking.packet.SelectSpellC2SPacket;
-import net.electro.elementalist.spells.SpellMaster;
+import net.electro.elementalist.registry.MessageRegistry;
+import net.electro.elementalist.networking.SelectSpellC2SPacket;
+import net.electro.elementalist.registry.SpellRegistry;
+import net.electro.elementalist.spell.SpellBase;
 import net.electro.elementalist.util.ElementalistMaps;
 import net.electro.elementalist.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class SpellSelectWheelGui extends Screen {
     private final Minecraft mc = Minecraft.getInstance();
-    private SpellMaster hoveredSpell;
+    private SpellBase hoveredSpell;
     ResourceLocation spellSelectWheelTexture = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/spell_select_wheel.png");
     ResourceLocation activeSpellFrameTexture = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/active_spell_frame.png");
     ResourceLocation inactiveSpellFrameTexture = new ResourceLocation(Elementalist.MOD_ID, "textures/gui/inactive_spell_frame.png");
@@ -58,7 +59,7 @@ public class SpellSelectWheelGui extends Screen {
         poseStack.popPose();
 
 
-        List<SpellMaster> spellList = ElementalistMaps.getUnlockedSpellListOfElement(((ChargedStaff)mc.player.getMainHandItem().getItem()).ELEMENT,
+        List<SpellBase> spellList = SpellRegistry.getUnlockedSpellsOfElement(((ChargedStaff)mc.player.getMainHandItem().getItem()).ELEMENT,
                 ClientSpellStateData.getUnlockedSpells());
 
         int segmentsAmount = spellList.size();
@@ -76,27 +77,27 @@ public class SpellSelectWheelGui extends Screen {
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
         if (!ClientSpellStateData.getIsSpellAlternateActive()) {
             if (pButton == 0) {
-                ModMessages.sendToServer(new SelectSpellC2SPacket(hoveredSpell.spellId, 0));
+                MessageRegistry.sendToServer(new SelectSpellC2SPacket(hoveredSpell.spellId, 0));
             }
             else {
-                ModMessages.sendToServer(new SelectSpellC2SPacket(hoveredSpell.spellId, 1));
+                MessageRegistry.sendToServer(new SelectSpellC2SPacket(hoveredSpell.spellId, 1));
             }
         }
         else {
             if (pButton == 0) {
-                ModMessages.sendToServer(new SelectSpellC2SPacket(hoveredSpell.spellId, 2));
+                MessageRegistry.sendToServer(new SelectSpellC2SPacket(hoveredSpell.spellId, 2));
             }
             else {
-                ModMessages.sendToServer(new SelectSpellC2SPacket(hoveredSpell.spellId, 3));
+                MessageRegistry.sendToServer(new SelectSpellC2SPacket(hoveredSpell.spellId, 3));
             }
         }
 
         return super.mouseClicked(pMouseX, pMouseY, pButton);
     }
 
-    private void drawSpellFrame(GuiGraphics guiGraphics, int x, int y, SpellMaster spell, boolean isHovered) {
+    private void drawSpellFrame(GuiGraphics guiGraphics, int x, int y, SpellBase spell, boolean isHovered) {
         PoseStack poseStack = guiGraphics.pose();
-        int spellId = spell.spellId;
+        ResourceLocation spellId = spell.spellId;
         int currentCooldown = ClientSpellStateData.getCooldown(spellId);
 
         int maxCooldown = spell.spellCooldownTicks;
@@ -131,7 +132,7 @@ public class SpellSelectWheelGui extends Screen {
         poseStack.popPose();
 
         poseStack.pushPose();
-        Component spellName = Component.translatable("elementalist.spell_name." + spell.spellName);
+        Component spellName = Component.translatable("elementalist.spell_name." + spell.getName());
         int spellNameTextWidth = mc.font.width(spellName);
         
         guiGraphics.drawString(this.font, spellName, x + 16 - (spellNameTextWidth / 2), y - mc.font.lineHeight - 2, 0xFFFFFFFF, true);
@@ -139,7 +140,7 @@ public class SpellSelectWheelGui extends Screen {
         poseStack.popPose();
     }
 
-    private void renderSegment(GuiGraphics guiGraphics, SpellMaster spell, int segmentsAmount,
+    private void renderSegment(GuiGraphics guiGraphics, SpellBase spell, int segmentsAmount,
                                int segmentIndex, int xAnchor, int yAnchor, boolean isHovered) {
         double segmentAngle = Math.toRadians(360 / (float)segmentsAmount * segmentIndex + (180 / (float)segmentsAmount));
         int x = xAnchor + (int)(-Math.sin(segmentAngle) * 80) - 16;

@@ -1,19 +1,15 @@
 package net.electro.elementalist.block.entity;
 
-import net.electro.elementalist.entities.spells.MagicCircleEntity;
-import net.electro.elementalist.item.ModItems;
+import net.electro.elementalist.entity.spells.MagicCircleEntity;
+import net.electro.elementalist.registry.ItemRegistry;
 import net.electro.elementalist.item.bracelets.UnchargedStaff;
 import net.electro.elementalist.util.ParticleUtil;
 import net.electro.elementalist.util.Utility;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
@@ -79,18 +75,18 @@ public class AltarBlockEntity extends BlockEntity {
         if (!itemEntities.isEmpty()) {
             for (ItemEntity itemEntity : itemEntities) {
                 Item item = itemEntity.getItem().getItem();
-                if (item.equals(Items.COAL)) {
-                    staffEntity.setItem(new ItemStack(ModItems.FIRE_BRACELET_IRON.get()));
+                if (item.equals(net.minecraft.world.item.Items.COAL)) {
+                    staffEntity.setItem(new ItemStack(ItemRegistry.FIRE_BRACELET_IRON.get()));
                     itemEntity.discard();
                     break;
                 }
-                else if (item.equals(Items.POTION) && PotionUtils.getPotion(itemEntity.getItem()).equals(Potions.WATER)) {
-                    staffEntity.setItem(new ItemStack(ModItems.WATER_BRACELET_IRON.get()));
+                else if (item.equals(net.minecraft.world.item.Items.POTION) && PotionUtils.getPotion(itemEntity.getItem()).equals(Potions.WATER)) {
+                    staffEntity.setItem(new ItemStack(ItemRegistry.WATER_BRACELET_IRON.get()));
                     itemEntity.discard();
                     break;
                 }
-                else if (item.equals(Items.SNOW_BLOCK)) {
-                    staffEntity.setItem(new ItemStack(ModItems.ICE_BRACELET_IRON.get()));
+                else if (item.equals(net.minecraft.world.item.Items.SNOW_BLOCK)) {
+                    staffEntity.setItem(new ItemStack(ItemRegistry.ICE_BRACELET_IRON.get()));
                     itemEntity.discard();
                     break;
                 }

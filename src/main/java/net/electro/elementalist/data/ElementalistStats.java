@@ -1,8 +1,13 @@
 package net.electro.elementalist.data;
 
+import net.electro.elementalist.Elementalist;
 import net.electro.elementalist.util.Element;
 import net.electro.elementalist.util.ElementalistMaps;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 
 import java.util.ArrayList;
@@ -11,9 +16,18 @@ import java.util.List;
 
 @AutoRegisterCapability
 public class ElementalistStats {
-    private List<Integer> playerUnlockedSpells = Arrays.asList(0, 4, 6, 9, 10);
+    private List<ResourceLocation> playerUnlockedSpells = Arrays.asList(
+            new ResourceLocation(Elementalist.MOD_ID, "fireball"),
+            new ResourceLocation(Elementalist.MOD_ID, "airblade"),
+            new ResourceLocation(Elementalist.MOD_ID, "ice_spear"),
+            new ResourceLocation(Elementalist.MOD_ID, "thunderbolt"),
+            new ResourceLocation(Elementalist.MOD_ID, "water_slash")
+
+    );
     private int playerLevel = 0;
     private int playerExperience = 0;
+
+    private boolean combatMode = false;
 
     private List<Integer> elementExperience = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0);
 
@@ -21,7 +35,7 @@ public class ElementalistStats {
     private List<Integer> elementSkillPoints = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0);
 
 
-    public void unlockSpell (int spellID)
+    public void unlockSpell (ResourceLocation spellID)
     {
         this.playerUnlockedSpells.add(spellID);
     }
@@ -42,6 +56,14 @@ public class ElementalistStats {
         int elementIndex = ElementalistMaps.elementToIndexMap.get(element);
         this.elementLevel.set(elementIndex, this.elementLevel.get(elementIndex) + 1);
         this.elementSkillPoints.set(elementIndex, this.elementSkillPoints.get(elementIndex) + 1);
+    }
+
+    public void toggleCombatMode() {
+        this.combatMode = !this.combatMode;
+    }
+
+    public boolean isInCombatMode() {
+        return this.combatMode;
     }
 
     public int getPlayerLevel() {
@@ -70,7 +92,7 @@ public class ElementalistStats {
     }
 
 
-    public List<Integer> getUnlockedSpellsList ()
+    public List<ResourceLocation> getUnlockedSpellsList ()
     {
         return playerUnlockedSpells;
     }
@@ -78,9 +100,9 @@ public class ElementalistStats {
     public String getSpellsString ()
     {
         String spellString = "";
-        for (Integer a : playerUnlockedSpells)
+        for (ResourceLocation a : playerUnlockedSpells)
         {
-            spellString += a + " ";
+            spellString += a.toString() + " ";
         }
         return spellString;
     }
@@ -93,27 +115,33 @@ public class ElementalistStats {
         this.elementExperience = source.elementExperience;
         this.elementLevel = source.elementLevel;
         this.elementSkillPoints = source.elementSkillPoints;
+        this.combatMode = source.combatMode;
     }
     public void saveNBTData(CompoundTag nbt)
     {
-        nbt.putIntArray("unlocked_spells", playerUnlockedSpells);
+        ListTag unlockedSpellsTag = new ListTag();
+        for (ResourceLocation spell : playerUnlockedSpells) {
+            unlockedSpellsTag.add(StringTag.valueOf(spell.toString()));
+        }
+        nbt.put("elementalist_unlocked_spells", unlockedSpellsTag);
         nbt.putInt("elementalist_level", playerLevel);
         nbt.putInt("elementalist_experience", playerExperience);
         nbt.putIntArray("elementalist_element_experience", elementExperience);
         nbt.putIntArray("elementalist_element_level", elementLevel);
         nbt.putIntArray("elementalist_element_skill_points", elementSkillPoints);
+        nbt.putBoolean("elementalist_combat_mode", combatMode);
     }
 
     public void loadNBTData(CompoundTag nbt)
     {
-        int[] nbtData = nbt.getIntArray("unlocked_spells");
+        ListTag unlockedSpellsTag = nbt.getList("elementalist_unlocked_spells", Tag.TAG_STRING);
         playerUnlockedSpells = new ArrayList<>();
-        for (int t : nbtData)
+        for (int i = 0; i < unlockedSpellsTag.size(); i++)
         {
-            playerUnlockedSpells.add(t);
+            playerUnlockedSpells.add(new ResourceLocation(unlockedSpellsTag.getString(i)));
         }
 
-        nbtData = nbt.getIntArray("elementalist_element_experience");
+        int[] nbtData = nbt.getIntArray("elementalist_element_experience");
         elementExperience = new ArrayList<>();
         for (int t : nbtData)
         {
@@ -136,5 +164,6 @@ public class ElementalistStats {
 
         playerLevel = nbt.getInt("elementalist_level");
         playerExperience = nbt.getInt("elementalist_experience");
+        combatMode = nbt.getBoolean("elementalist_combat_mode");
     }
 }

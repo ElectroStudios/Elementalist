@@ -1,18 +1,16 @@
 package net.electro.elementalist.client.renderer.spellentities;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.electro.elementalist.Elementalist;
-import net.electro.elementalist.client.models.spellentities.MagicCircleModel;
-import net.electro.elementalist.entities.spells.MagicCircleEntity;
+import net.electro.elementalist.client.model.spellentities.MagicCircleModel;
+import net.electro.elementalist.entity.spells.MagicCircleEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.core.object.Color;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 

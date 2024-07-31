@@ -2,7 +2,7 @@ package net.electro.elementalist.client.renderer.spellentities;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.electro.elementalist.Elementalist;
-import net.electro.elementalist.entities.spells.MasterSpellEntity;
+import net.electro.elementalist.entity.spells.MasterSpellEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

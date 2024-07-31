@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class FrozenEffect extends MobEffect {
-    protected FrozenEffect(MobEffectCategory pCategory, int pColor) {
+    public FrozenEffect(MobEffectCategory pCategory, int pColor) {
         super(pCategory, pColor);
     }
 

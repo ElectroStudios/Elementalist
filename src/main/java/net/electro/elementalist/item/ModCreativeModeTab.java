@@ -1,6 +1,7 @@
 package net.electro.elementalist.item;
 
 import net.electro.elementalist.Elementalist;
+import net.electro.elementalist.registry.ItemRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -14,7 +15,7 @@ public class ModCreativeModeTab {
             Elementalist.MOD_ID);
     public static RegistryObject<CreativeModeTab> ELEMENTALIST_TAB = CREATIVE_MODE_TABS.register("elementalist",
             () -> CreativeModeTab.builder()
-                    .icon(() -> new ItemStack(ModItems.FIRE_BRACELET_IRON.get()))
+                    .icon(() -> new ItemStack(ItemRegistry.FIRE_BRACELET_IRON.get()))
                     .title(Component.translatable("itemGroup.elementalist"))
                     .build());
 

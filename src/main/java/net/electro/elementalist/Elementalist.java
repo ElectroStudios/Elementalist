@@ -1,24 +1,22 @@
 package net.electro.elementalist;
 
 import com.mojang.logging.LogUtils;
-import net.electro.elementalist.block.ModBlocks;
+import net.electro.elementalist.registry.BlockRegistry;
 import net.electro.elementalist.block.entity.ModBlockEntities;
-import net.electro.elementalist.client.particle.ModParticles;
-import net.electro.elementalist.effect.ModEffects;
-import net.electro.elementalist.entities.ModEntities;
+import net.electro.elementalist.registry.ParticleRegistry;
+import net.electro.elementalist.registry.EffectRegistry;
+import net.electro.elementalist.registry.EntityRegistry;
 import net.electro.elementalist.item.ModCreativeModeTab;
-import net.electro.elementalist.item.ModItems;
-import net.electro.elementalist.networking.ModMessages;
-import net.electro.elementalist.spells.SpellRegistry;
+import net.electro.elementalist.registry.ItemRegistry;
+import net.electro.elementalist.registry.MessageRegistry;
+import net.electro.elementalist.registry.SpellRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import software.bernie.geckolib.GeckoLib;
@@ -34,19 +32,19 @@ public class Elementalist
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        ModItems.register(modEventBus);
+        ItemRegistry.register(modEventBus);
 
-        ModBlocks.register(modEventBus);
+        BlockRegistry.register(modEventBus);
 
         ModBlockEntities.register(modEventBus);
 
-        ModEntities.ENTITIES.register(modEventBus);
+        EntityRegistry.ENTITIES.register(modEventBus);
 
-        ModParticles.register(modEventBus);
+        ParticleRegistry.register(modEventBus);
 
         ModCreativeModeTab.register(modEventBus);
 
-        ModEffects.register(modEventBus);
+        EffectRegistry.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
@@ -61,22 +59,22 @@ public class Elementalist
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-        ModMessages.register();
+        MessageRegistry.register();
     }
 
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTab() == ModCreativeModeTab.ELEMENTALIST_TAB.get()) {
-            event.accept(ModItems.FIRE_BRACELET_IRON);
-            event.accept(ModItems.WATER_BRACELET_IRON);
-            event.accept(ModItems.AIR_BRACELET_IRON);
-            event.accept(ModItems.LIGHTNING_BRACELET_IRON);
-            event.accept(ModItems.ICE_BRACELET_IRON);
-            event.accept(ModItems.ELEMENTALIST_GRIMOIRE);
-            event.accept(ModItems.UNCHARGED_STAFF);
-            event.accept(ModItems.WATER_SPIRIT_SPAWN_EGG);
-            event.accept(ModItems.LESSER_DEMON_SPAWN_EGG);
-            event.accept(ModItems.BAKENEKO_SPAWN_EGG);
+            event.accept(ItemRegistry.FIRE_BRACELET_IRON);
+            event.accept(ItemRegistry.WATER_BRACELET_IRON);
+            event.accept(ItemRegistry.AIR_BRACELET_IRON);
+            event.accept(ItemRegistry.LIGHTNING_BRACELET_IRON);
+            event.accept(ItemRegistry.ICE_BRACELET_IRON);
+            event.accept(ItemRegistry.ELEMENTALIST_GRIMOIRE);
+            event.accept(ItemRegistry.UNCHARGED_STAFF);
+            event.accept(ItemRegistry.WATER_SPIRIT_SPAWN_EGG);
+            event.accept(ItemRegistry.LESSER_DEMON_SPAWN_EGG);
+            event.accept(ItemRegistry.BAKENEKO_SPAWN_EGG);
         }
     }
 
